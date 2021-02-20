@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,Image,Linking} from 'react-native';
+import {View,Image,Linking,TouchableOpacity} from 'react-native';
 import {DrawerContentScrollView,DrawerItemList,DrawerItem} from '@react-navigation/drawer';
 import { FontAwesome } from '@expo/vector-icons'; 
 
@@ -15,7 +15,9 @@ import { FontAwesome } from '@expo/vector-icons';
           <FontAwesome name="twitter" size={24} color="#1DA1F2" style={{margin:10}} onPress={()=>Linking.openURL('https://twitter.com/WiggleTunesSA')} />
           <FontAwesome name="youtube-play" size={24} color="#FF0000" style={{margin:10}} onPress={()=>Linking.openURL('https://www.youtube.com/channel/UCJBqTfRmBYwAQJ7k4UZud7A?view_as=subscriber')} />
           <FontAwesome name="instagram" size={24} color="#405DE6" style={{margin:10}} onPress={()=>Linking.openURL('https://www.instagram.com/wiggletunes_sa/?hl=en')}/>
-          <Image  source={require('../img/tok.jpg')} style={{width:20,height:20,marginTop:12,marginLeft:10}} onPress={()=>Linking.openURL('https://www.tiktok.com/@wiggletunes/')}/>
+          <TouchableOpacity onPress={()=>Linking.openURL('https://www.tiktok.com/@wiggletunes/')}>
+          <Image  source={require('../img/tik-tok.png')} style={{width:20,height:20,marginTop:12,marginLeft:10}} />
+          </TouchableOpacity>
         </View>)} style={{marginVertical:20}} />
 
       </DrawerContentScrollView>

@@ -5,6 +5,7 @@ import {View,
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  SafeAreaView
   } from 'react-native';
   import {AdMobBanner} from 'expo-ads-admob';
 import Card from '../components/Card';
@@ -31,6 +32,7 @@ constructor(){
         const {products}=this.state;
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
+            <SafeAreaView>
             <FlatList
              keyExtractor={item=>item.id.toString()}
              data={products}
@@ -66,6 +68,7 @@ constructor(){
              )}
             
             />
+            </SafeAreaView>
               <AdMobBanner
               style={{width:'100%'}}
               bannerSize="fullBanner"

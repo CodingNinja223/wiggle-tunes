@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {FlatList,TouchableOpacity,ScrollView,Image} from 'react-native';
+import {FlatList,TouchableOpacity,ScrollView,Image,SafeAreaView} from 'react-native';
 import {AdMobBanner} from 'expo-ads-admob';
 import { Card, CardItem, Left,Right, Body,Text, Icon } from 'native-base';
 
@@ -26,6 +26,7 @@ class News extends Component{
         console.log(posts);
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
+
           <FlatList
             keyExtractor={item=> item.id.toString()}
             data={posts}

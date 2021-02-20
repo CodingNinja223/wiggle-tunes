@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,StyleSheet,FlatList,TouchableOpacity,Linking,ScrollView} from 'react-native';
+import {View,StyleSheet,FlatList,TouchableOpacity,Linking,ScrollView,SafeAreaView} from 'react-native';
 import {Image} from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons'
@@ -94,6 +94,7 @@ class Podcast extends Component{
       console.log(this.state.sounds)
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
+            <SafeAreaView>
              <FlatList
               keyExtractor={item=> item.id.toString()}
               data={podcast}
@@ -134,6 +135,7 @@ class Podcast extends Component{
                 </Content>
               )}
               />
+              </SafeAreaView>
               <AdMobBanner
                   style={{width:'100%'}}
                   bannerSize="fullBanner"
