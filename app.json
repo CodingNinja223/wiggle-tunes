@@ -14,9 +14,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "bundleIdentifier":"com.wiggletunes.app",
       "supportsTablet": true,
