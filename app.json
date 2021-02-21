@@ -2,7 +2,7 @@
   "expo": {
     "name": "Wiggle Tunes",
     "slug": "wiggle-tunes",
-    "version": "1.1.0",
+    "version": "2.0.1",
     "sdkVersion": "40.0.0",
     "orientation": "portrait",
     "icon": "./src/img/icon-app.png",
@@ -26,7 +26,7 @@
     },
     "android": {
       "package":"com.wiggletunes.app",
-      "versionCode": 1,
+      "versionCode": 2,
       "enableDangerousExperimentalLeanBuilds" : true,
       "adaptiveIcon": {
         "foregroundImage": "./src/img/Adaptive-icon.png",
