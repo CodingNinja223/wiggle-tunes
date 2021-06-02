@@ -7,6 +7,7 @@ class Watch extends Component{
                 source={{
                 uri: 'https://www.youtube.com/channel/UCJBqTfRmBYwAQJ7k4UZud7A'
                 }}
+                
              />           
         )
 }

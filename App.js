@@ -12,12 +12,21 @@ import Review from './src/screens/Review';
 import Shop from './src/screens/Shop';
 import News from './src/screens/News';
 import NewsDeatil from './src/screens/NewsDetails';
-import { Ionicons, AntDesign , MaterialIcons,Entypo   } from '@expo/vector-icons'; 
+import { Ionicons, AntDesign , MaterialIcons,Entypo ,FontAwesome5  } from '@expo/vector-icons'; 
 import RadioTabs from './src/screens/RadioTab';
 import ProductDetail from './src/screens/ProductDetail';
 import Feedback from './src/screens/Feedback';
 import CustomDrawer from './src/screens/CustomDrawer';
 import * as Notifications from 'expo-notifications';
+import VoiceMessage from './src/screens/Voice-Message';
+import {View,Text,Alert} from 'react-native';
+import VideoMessage from './src/screens/Video-message';
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {selectCartItems, selectCartItemsCount} from './redux/cart/cart.selector'
+import Checkout from './src/screens/Checkout';
+import OneSignal from 'react-native-onesignal';
+
 const Stack=createStackNavigator();
 const PrimaryNavigation=({navigation})=>{
 return(
@@ -144,13 +153,13 @@ const TabNavigation=()=>{
         </Tab.Navigator>
     )
 }
-const ShopNavigator=({navigation})=>{
+const ShopNavigator=({navigation,itemCount})=>{
     return(
        <Stack.Navigator>
            <Stack.Screen name="Shop" component={Shop}  
               options={{
                 headerRight:()=>(
-                    <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
+                    <Entypo name="home" size={30} color="white"  onPress={()=>navigation.navigate('Now Playing')} />
                 ),
                 headerLeft:()=>(
                     <Ionicons name="menu" size={30} color="white" onPress={()=>navigation.openDrawer()}/>
@@ -168,9 +177,16 @@ const ShopNavigator=({navigation})=>{
                   },
                 headerTintColor: '#fff', 
                 headerRight:()=>(
-                    <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
+                 <Entypo name="shopping-cart" size={30} color="white"  onPress={()=>navigation.navigate('Cart')} />
                 ),
                 })}/>
+            <Stack.Screen name="Cart" component={Checkout} options={{
+
+                headerStyle:{
+                    backgroundColor:'black'
+                },
+                headerTintColor: '#fff', 
+            }} />
        </Stack.Navigator>
     )
 }
@@ -239,7 +255,42 @@ class App extends Component {
           Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
           ...Ionicons.font,
         });
-        this.setState({ isReady: true });       
+        this.setState({ isReady: true });   
+        
+        
+        /* O N E S I G N A L   S E T U P */
+        OneSignal.setLogLevel(6, 0);
+        OneSignal.setAppId("590075df-aaa1-4966-a1f8-25ba8bdcbc6b");
+                
+        OneSignal.promptForPushNotificationsWithUserResponse(response => {
+            console.log("Prompt response:", response);
+        });
+        OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
+            console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
+            let notification = notificationReceivedEvent.getNotification();
+            console.log("notification: ", notification);
+            const data = notification.additionalData
+            console.log("additionalData: ", data);
+            const button1 = {
+            text: "Cancel",
+            onPress: () => { notificationReceivedEvent.complete(); },
+            style: "cancel"
+            };
+            const button2 = { text: "Complete", onPress: () => { notificationReceivedEvent.complete(notification); }};
+            Alert.alert("Complete notification?", "Test", [ button1, button2], { cancelable: true });
+        });
+        
+        OneSignal.setNotificationOpenedHandler(notification => {
+            console.log("OneSignal: notification opened:", notification);
+        });
+        const deviceState = await OneSignal.getDeviceState();
+
+        this.setState({
+            isSubscribed : deviceState.isSubscribed
+        });
+
+
+
      }
 	render(){
         console.log(this.state.data)
@@ -282,6 +333,18 @@ class App extends Component {
                    )
 
                }} />
+               <Drawer.Screen name="Send Voice message" component={VoiceMessage} options={{
+                   drawerIcon:()=>(
+                    <MaterialIcons name="keyboard-voice" size={24} color="white" />
+                   )
+
+               }} />
+                <Drawer.Screen name="Send Video Message" component={VideoMessage} options={{
+                   drawerIcon:()=>(
+                    <FontAwesome5 name="video" size={24} color="white" />
+                   )
+
+               }} />
                <Drawer.Screen name="Rate this App" component={ReviewNavigation} options={{
                    drawerIcon:()=>(
                     <MaterialIcons name="star-rate" size={24} color="white" />
@@ -293,4 +356,10 @@ class App extends Component {
 	)
 }
 }
-export default App;
+
+
+const mapStateToProps=createStructuredSelector({
+    itemCount:selectCartItemsCount
+})
+
+export default connect(mapStateToProps)(App);

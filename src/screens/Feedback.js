@@ -13,7 +13,7 @@ class Feedback extends Component{
              source={{
              uri: 'https://www.wiggletunes.co.za/feedback-2/'
             }}
-  
+          
          />
         )
     }

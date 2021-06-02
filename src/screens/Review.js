@@ -7,7 +7,7 @@ class Reviews extends Component{
             source={{
             uri: 'https://play.google.com/store/apps/details?id=com.wiggletunes.app'
             }}
-  
+           
          />
         )
     }

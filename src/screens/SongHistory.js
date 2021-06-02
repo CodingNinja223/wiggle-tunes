@@ -6,6 +6,7 @@ const Histrory =()=>{
       source={{
       uri: 'https://www.wiggletunes.co.za/song-history-v4.html'
       }}
+      
    />
     )
 }

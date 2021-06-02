@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {FlatList,TouchableOpacity,ScrollView,Image,SafeAreaView} from 'react-native';
+import {View,FlatList,TouchableOpacity,ScrollView,Image,SafeAreaView,ActivityIndicator, StyleSheet }from 'react-native';
 import {AdMobBanner} from 'expo-ads-admob';
 import { Card, CardItem, Left,Right, Body,Text, Icon } from 'native-base';
 
@@ -7,15 +7,18 @@ class News extends Component{
     constructor(){
         super();
         this.state={
-          posts:[]
+          posts:[],
+          isLoading:true
         }
     }
+
     componentDidMount(){
     fetch('https://www.wiggletunes.co.za/wp-json/wp/v2/posts?_embed')
     .then(res=>res.json())
     .then(data=>{
         this.setState({
-            posts:[...data]
+            posts:[...data],
+            isLoading:false
         })
     })
   
@@ -24,6 +27,13 @@ class News extends Component{
     render(){
       const {posts}=this.state;
         console.log(posts);
+        if(this.state.isLoading){
+          return(
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#a80404"/>
+            </View>
+          )
+        }
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
 
@@ -70,3 +80,12 @@ class News extends Component{
     }
 }
 export default News;
+
+const styles=StyleSheet.create({
+  container:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'black'
+  }
+})

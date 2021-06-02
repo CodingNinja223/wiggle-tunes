@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,StyleSheet,FlatList,TouchableOpacity,Linking,ScrollView,SafeAreaView} from 'react-native';
+import {View,StyleSheet,FlatList,TouchableOpacity,Linking,ScrollView,SafeAreaView,ActivityIndicator} from 'react-native';
 import {Image} from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons'
@@ -11,6 +11,7 @@ class Podcast extends Component{
     constructor(){
         super();
         this.state={
+          isLoading:true,
           podcast:[],isPlaying: false,playbackInstance: null,currentIndex: 0,volume: 1.0,isBuffering: true,sounds:'',playingStatus:"nosound"
         }
     }
@@ -18,7 +19,8 @@ class Podcast extends Component{
       const response = await fetch('https://wiggletunes.co.za/wp-json/wp/v2/podcast');
       const data = await response.json();
       this.setState({
-        podcast:[...data]
+        podcast:[...data],
+        isLoading:false
       })
 
     }
@@ -92,6 +94,13 @@ class Podcast extends Component{
     render(){
       const {podcast,isPlaying}=this.state;
       console.log(this.state.sounds)
+      if(this.state.isLoading){
+        return(
+          <View style={styles.containers}>
+              <ActivityIndicator size="large" color="#a80404"/>
+          </View>
+        )
+      }
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
             <SafeAreaView>
@@ -155,8 +164,16 @@ const styles=StyleSheet.create({
     },
     controls: {
       flexDirection: 'row'
+    },
+    containers:{
+      flex:1,
+      justifyContent:'center',
+      alignItems:'center',
+      backgroundColor:'black'
     }
 })
 
 
 export default Podcast;
+
+

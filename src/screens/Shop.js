@@ -5,7 +5,8 @@ import {View,
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator
   } from 'react-native';
   import {AdMobBanner} from 'expo-ads-admob';
 import Card from '../components/Card';
@@ -16,6 +17,7 @@ class Shop extends Component{
 constructor(){
     super();
     this.state={
+      isloading:true,
      products:[]
     }
 }
@@ -24,18 +26,27 @@ constructor(){
     .then(res=>res.json())
     .then(data=>{
         this.setState({
-            products:[...data]
+            products:[...data],
+            isloading:false
         })
     })
 
     
   }
     render(){
-        const {products}=this.state;
+        const {products,isloading}=this.state;
+        if(isloading){
+          return(
+            <View style={styles.containers}>
+                <ActivityIndicator size="large" color="#a80404"/>
+            </View>
+          )
+        }
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
             <SafeAreaView>
             <FlatList
+             numColumns={2}
              keyExtractor={item=>item.id.toString()}
              data={products}
              renderItem={({item})=>(
@@ -90,8 +101,7 @@ const styles=StyleSheet.create({
     justifyContent:'center',
   },
   product: {
-    height: 300,
-    margin: 20
+    height: 300
   },
   touchable: {
     borderRadius: 10,
@@ -108,7 +118,8 @@ const styles=StyleSheet.create({
   },
   image: {
     width: '50%',
-    height: '100%'
+    height: '100%',
+    resizeMode:"contain"
   },
   details: {
     alignItems: 'center',
@@ -129,6 +140,12 @@ const styles=StyleSheet.create({
     alignItems: 'center',
     height: '23%',
     paddingHorizontal: 20
+  },
+  containers:{
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'black'
   }
 })
 export default Shop;
