@@ -271,15 +271,12 @@ class App extends Component {
             console.log("notification: ", notification);
             const data = notification.additionalData
             console.log("additionalData: ", data);
-            const button1 = {
-            text: "Cancel",
-            onPress: () => { notificationReceivedEvent.complete(); },
-            style: "cancel"
-            };
-            const button2 = { text: "Complete", onPress: () => { notificationReceivedEvent.complete(notification); }};
-            Alert.alert("Complete notification?", "Test", [ button1, button2], { cancelable: true });
         });
         
+        OneSignal.setInAppMessageClickHandler(respons=>{
+            console.log("OneSignal IAM clicked:", respons);
+        })
+
         OneSignal.setNotificationOpenedHandler(notification => {
             console.log("OneSignal: notification opened:", notification);
         });
