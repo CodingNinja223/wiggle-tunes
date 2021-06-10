@@ -19,13 +19,13 @@ import Feedback from './src/screens/Feedback';
 import CustomDrawer from './src/screens/CustomDrawer';
 import * as Notifications from 'expo-notifications';
 import VoiceMessage from './src/screens/Voice-Message';
-import {View,Text,Alert} from 'react-native';
 import VideoMessage from './src/screens/Video-message';
 import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 import {selectCartItems, selectCartItemsCount} from './redux/cart/cart.selector'
 import Checkout from './src/screens/Checkout';
 import OneSignal from 'react-native-onesignal';
+import SavedRecording from './src/screens/SavedRecordings';
 
 const Stack=createStackNavigator();
 const PrimaryNavigation=({navigation})=>{
@@ -231,6 +231,52 @@ const ReviewNavigation=({navigation})=>{
       </Stack.Navigator>
     )
 }
+
+
+const VoiceNavigation=({navigation})=>{
+    return(
+      <Stack.Navigator>
+          <Stack.Screen name="Voice Message" component={VoiceMessage}  
+            options={{
+                headerRight:()=>(
+                    <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
+                ),
+                headerLeft:()=>(
+                    <Ionicons name="menu" size={30} color="white" onPress={()=>navigation.openDrawer()}/>
+                ),
+                headerStyle: {
+                    backgroundColor: 'black',
+                  },
+                headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen name="Recordings" component={SavedRecording}/>
+      </Stack.Navigator>
+    )
+}
+
+const VideoNavigation=({navigation})=>{
+    return(
+      <Stack.Navigator>
+          <Stack.Screen name="Video Message" component={VideoMessage}  
+            options={{
+                headerRight:()=>(
+                    <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
+                ),
+                headerLeft:()=>(
+                    <Ionicons name="menu" size={30} color="white" onPress={()=>navigation.openDrawer()}/>
+                ),
+                headerStyle: {
+                    backgroundColor: 'black',
+                  },
+                headerTintColor: '#fff',
+            }}
+          />
+      </Stack.Navigator>
+    )
+}
+
+
 const Drawer =createDrawerNavigator();
 
 Notifications.setNotificationHandler({
@@ -330,13 +376,13 @@ class App extends Component {
                    )
 
                }} />
-               <Drawer.Screen name="Send Voice message" component={VoiceMessage} options={{
+               <Drawer.Screen name="Send Voice message" component={VoiceNavigation} options={{
                    drawerIcon:()=>(
                     <MaterialIcons name="keyboard-voice" size={24} color="white" />
                    )
 
                }} />
-                <Drawer.Screen name="Send Video Message" component={VideoMessage} options={{
+                <Drawer.Screen name="Send Video Message" component={VideoNavigation} options={{
                    drawerIcon:()=>(
                     <FontAwesome5 name="video" size={24} color="white" />
                    )

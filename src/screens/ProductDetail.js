@@ -18,7 +18,10 @@ class ProductDetail extends Component{
            <Text style={styles.price}>R{Number(productPrice)}</Text>
         </View>
         <View style={{marginVertical:5}}>
-             <TouchableOpacity style={styles.button} onPress={()=> this.props.addItem(this.props.route.params)}>
+             <TouchableOpacity style={styles.button} onPress={()=> {
+               this.props.addItem(this.props.route.params)
+               console.log(`This is the products ${this.props.route.params}`)
+               }}>
                   <Text style={{color:'black',textAlign:'center'}}>Add To Cart</Text>
              </TouchableOpacity>
         </View>

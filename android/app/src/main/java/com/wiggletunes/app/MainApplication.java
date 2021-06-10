@@ -6,9 +6,10 @@ import android.net.Uri;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.rnsmtpmailer.RNSmtpMailerPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
-import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
-import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
+import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;

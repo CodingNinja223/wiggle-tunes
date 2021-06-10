@@ -16,3 +16,4 @@ const RNREDUX=()=>(
 )
 
 AppRegistry.registerComponent('wiggletunes',()=>RNREDUX)
+
