@@ -9,9 +9,9 @@ import AudioRecorderPlayer, {
 } from 'react-native-audio-recorder-player';
 import {Card,Title,Divider} from 'react-native-paper'
 import { Entypo,AntDesign} from '@expo/vector-icons'; 
-// import RNSmtpMailer from "react-native-smtp-mailer";
 import { Modal, Portal, Button, Provider } from 'react-native-paper';
-// import RNFetchBlob from 'react-native-fetch-blob'
+// import SoundRecorder from 'react-native-sound-recorder';
+
 
 
 
@@ -35,8 +35,8 @@ class VoiceMessage extends Component {
 }
 
 
-showModal = () =>  {this.setState({visible:true})};
-hideModal = () => {this.setState({visible:false})};
+// showModal = () =>  {this.setState({visible:true})};
+// hideModal = () => {this.setState({visible:false})};
 
 async componentDidMount(){
   if (Platform.OS === 'android') {
@@ -79,6 +79,7 @@ onStartRecord = async () =>{
   };
 
   console.log('audioSet',audioSet);
+  
   const uri=await this.audioRecorderPlayer.startRecorder(null,audioSet,null);
   this.audioRecorderPlayer.addRecordBackListener((e) => {
     console.log('Recording . . . ', e.currentPosition);
@@ -93,6 +94,7 @@ onStartRecord = async () =>{
   this.setState({
     isRecording:true
   })
+
 }
 
 onStopRecord = async () =>{
@@ -109,14 +111,13 @@ const result = await this.audioRecorderPlayer.stopRecorder();
    this.setState({
     isRecording:false
   })
-  this.showModal()
+
 }
 
 onStartPlay = async (e) => {
    console.log('onStartPlay');
-   let dirs = RNFetchBlob.fs.dirs
    const path = this.state.recordingdata
-   const msg = await this.audioRecorderPlayer.startPlayer(path );
+   const msg = await this.audioRecorderPlayer.startPlayer(path);
    this.audioRecorderPlayer.setVolume(1.0);
    console.log(msg);
    this.audioRecorderPlayer.addPlayBackListener((e) => {
@@ -152,18 +153,6 @@ onStartPlay = async (e) => {
     
  }
 
-  sendRequest=()=>{
-
-  }
-
-  saveRecording=()=>{
-
-  }
-
-  ViewRecordings=()=>{
-    this.props.navigation.navigate('Recordings')
-    console.log('hello world')
-  }
 
     render(){
       console.log(this.state.recordingdata)
@@ -186,11 +175,11 @@ onStartPlay = async (e) => {
               </TouchableOpacity>
               </View> */}
                { this.state.isRecording === false ?(  <TouchableOpacity >
-            <Entypo name="controller-record" size={35} color="red" onPress={()=>this.onStartRecord()}/>
+            <Entypo name="controller-record" size={35} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
             </TouchableOpacity>)
             :
             (<TouchableOpacity>
-             <Entypo name="controller-stop" size={35} color="red" onPress={()=> this.onStopRecord()}/>
+             <Entypo name="controller-stop" size={35} color="red" onPress={()=> this.onStopRecord()} style={{marginBottom:15}}/>
             </TouchableOpacity>)}
             </View>
           </View>
@@ -207,8 +196,8 @@ onStartPlay = async (e) => {
               </View>
             </Modal>
           </Portal>
-
-            {/* <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
+{/* 
+            <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
             <TouchableOpacity style={styles.flexContainer}  onPress={()=> this.onStartPlay()}>
              <AntDesign name="play" size={24} color="white" />
                <Text>{'  '}</Text> 
@@ -233,12 +222,7 @@ onStartPlay = async (e) => {
                <Text>{'  '}</Text>
                 <Text style={styles.color}>STOP</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-            style={styles.flexContainer2} 
-             onPress={()=>this.sendRequest()}
-             >
-                <Text style={styles.color2}>SEND VOICE NOTE</Text>
-            </TouchableOpacity> */}
+            */}
           
         </Card>
         </Provider>
@@ -289,7 +273,7 @@ const styles=StyleSheet.create({
     borderRadius:800,
     borderWidth:2,
     borderColor:'red',
-    padding:60,
+    padding:50,
     width:210,
     height:200
   },

@@ -26,7 +26,8 @@ import {selectCartItems, selectCartItemsCount} from './redux/cart/cart.selector'
 import Checkout from './src/screens/Checkout';
 import OneSignal from 'react-native-onesignal';
 import SavedRecording from './src/screens/SavedRecordings';
-
+import PushNotifications from './src/screens/notifications';
+import {db} from './src/util/firebase';
 const Stack=createStackNavigator();
 const PrimaryNavigation=({navigation})=>{
 return(
@@ -159,7 +160,7 @@ const ShopNavigator=({navigation,itemCount})=>{
            <Stack.Screen name="Shop" component={Shop}  
               options={{
                 headerRight:()=>(
-                    <Entypo name="home" size={30} color="white"  onPress={()=>navigation.navigate('Now Playing')} />
+                    <Entypo name="shopping-cart" size={30} color="white"  onPress={()=>navigation.navigate('Cart')} />
                 ),
                 headerLeft:()=>(
                     <Ionicons name="menu" size={30} color="white" onPress={()=>navigation.openDrawer()}/>
@@ -209,6 +210,27 @@ const FeedbackNavigation=({navigation
             }}
           />
         </Stack.Navigator>
+    )
+}
+
+const NotificationNavigator=({navigation})=>{
+    return(
+        <Stack.Navigator>
+        <Stack.Screen name="Notifications" component={PushNotifications}  
+          options={{
+              headerRight:()=>(
+                  <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
+              ),
+              headerLeft:()=>(
+                  <Ionicons name="menu" size={30} color="white" onPress={()=>navigation.openDrawer()}/>
+              ),
+              headerStyle: {
+                  backgroundColor: 'black',
+                },
+              headerTintColor: '#fff',
+          }}
+        />
+    </Stack.Navigator>
     )
 }
 const ReviewNavigation=({navigation})=>{
@@ -295,6 +317,10 @@ class App extends Component {
           isSubscribed:true
         }
     }
+
+
+ 
+
   async  componentDidMount() {
         await Font.loadAsync({
           Roboto: require('native-base/Fonts/Roboto.ttf'),
@@ -311,30 +337,45 @@ class App extends Component {
         OneSignal.promptForPushNotificationsWithUserResponse(response => {
             console.log("Prompt response:", response);
         });
-        OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
+        OneSignal.setNotificationWillShowInForegroundHandler(async notificationReceivedEvent => {
             console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
             let notification = notificationReceivedEvent.getNotification();
             console.log("notification: ", notification);
-            const data = notification.additionalData
+            const data = notification.additionalData;
             console.log("additionalData: ", data);
+           
         });
         
         OneSignal.setInAppMessageClickHandler(respons=>{
             console.log("OneSignal IAM clicked:", respons);
+            this.onReceived();
         })
 
-        OneSignal.setNotificationOpenedHandler(notification => {
+        OneSignal.setNotificationOpenedHandler( async (notification) => {
             console.log("OneSignal: notification opened:", notification);
+            await db.collection("Notifications")
+            .add({
+              Notification:[notification]
+             })
+             this.onReceived();
+            console.log('I am clicked by Sam')
         });
+
         const deviceState = await OneSignal.getDeviceState();
 
         this.setState({
             isSubscribed : deviceState.isSubscribed
         });
 
+    }
+
+    
+    onReceived() {
+        const {navigate} =this.props.navigation;
+        navigate('Notifications');
+    }
 
 
-     }
 	render(){
         console.log(this.state.data)
         if(!this.state.isReady){
@@ -382,12 +423,12 @@ class App extends Component {
                    )
 
                }} />
-                <Drawer.Screen name="Send Video Message" component={VideoNavigation} options={{
+                 <Drawer.Screen name="Notifications" component={NotificationNavigator} options={{
                    drawerIcon:()=>(
-                    <FontAwesome5 name="video" size={24} color="white" />
+                    <Ionicons name="notifications" size={24} color="white" />
                    )
 
-               }} />
+               }}/>
                <Drawer.Screen name="Rate this App" component={ReviewNavigation} options={{
                    drawerIcon:()=>(
                     <MaterialIcons name="star-rate" size={24} color="white" />

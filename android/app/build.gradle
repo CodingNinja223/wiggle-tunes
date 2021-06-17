@@ -137,7 +137,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
         versionName "2.0.1"
-        missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {
         abi {
@@ -185,12 +184,11 @@ android {
 }
 
 dependencies {
-     implementation fileTree(dir: "libs", include: ["*.jar"])
-     compile project(':react-native-audio-recorder-player')
-     compile project(':react-native-fetch-blob')     
-     implementation project(':react-native-smtp-mailer')
+    implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
+    compile project(':react-native-audio-recorder-player')
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(':react-native-google-pay')
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

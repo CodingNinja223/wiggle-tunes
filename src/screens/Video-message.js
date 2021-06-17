@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import VideoRecorder from 'react-native-beautiful-video-recorder';
-// import { RNCamera } from 'react-native-camera';
+// import VideoRecorder from 'react-native-beautiful-video-recorder';
+
 
 const PendingView = () => (
   <View
@@ -38,34 +38,7 @@ class VideoMessage extends Component{
   render(){
     return(
       <View style={styles.container}>
-        <RNCamera
-          style={styles.preview}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
-          androidCameraPermissionOptions={{
-            title: 'Permission to use camera',
-            message: 'We need your permission to use your camera',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-          androidRecordAudioPermissionOptions={{
-            title: 'Permission to use audio recording',
-            message: 'We need your permission to use your audio',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-        >
-          {({ camera, status, recordAudioPermissionStatus }) => {
-            if (status !== 'READY') return <PendingView />;
-            return (
-              <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                  <Text style={{ fontSize: 14 }}> SNAP </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        </RNCamera>
+       
       </View>
     )
   }
