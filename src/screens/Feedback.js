@@ -11,7 +11,7 @@ class Feedback extends Component{
         return(
             <WebView
              source={{
-             uri: 'https://www.wiggletunes.co.za/feedback-2/'
+             uri: 'https://www.wiggletunes.co.za/feedback/'
             }}
           
          />

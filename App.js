@@ -28,11 +28,14 @@ import OneSignal from 'react-native-onesignal';
 import SavedRecording from './src/screens/SavedRecordings';
 import PushNotifications from './src/screens/notifications';
 import {db} from './src/util/firebase';
+import PodDetail from './src/screens/Podcast-Detail';
+import CustomTabBar from './src/screens/CustomTabBar';
+import ViewRecordings from './src/screens/ViewRecordings';
 const Stack=createStackNavigator();
 const PrimaryNavigation=({navigation})=>{
 return(
    <Stack.Navigator initialRouteName="Now Playing">
-       <Stack.Screen name="Now Playing" component={RadioTabs}
+       <Stack.Screen name="Now Playing" navigation={navigation} component={RadioTabs}
         options={{
             
             headerLeft:()=>(
@@ -45,7 +48,22 @@ return(
         }}
        />
         <Stack.Screen name="Watch" component={Watch}  />
-        <Stack.Screen name="Podcast" component={Podcast} />
+        <Stack.Screen name="Podcast" component={Podcast} options={{
+            headerStyle: {
+                backgroundColor: 'black',
+              },
+            headerTintColor: '#fff',
+        }} />
+        <Stack.Screen name="Podcast Detail" component={PodDetail} options={{
+            headerRight:()=>(
+                <Entypo name="home" size={30} color="white"  onPress={()=>navigation.navigate('Now Playing')} />
+                ),
+            headerStyle: {
+                backgroundColor: 'black',
+              },
+            headerTintColor: '#fff',
+        }}/>
+        
    </Stack.Navigator>
  )
 }
@@ -120,16 +138,16 @@ const TabNavigation=()=>{
         initialRouteName="Now Playing"
         tabBarOptions={{
             activeTintColor: 'white',
-            inactiveTintColor: 'gray',
+            inactiveTintColor: '#d9d9d9',
             style:{
-                backgroundColor:'black',
-                color:'white'
+                borderTopColor: '#66666666',
+                backgroundColor: 'black',
+                elevation: 0,
             }
         }}
          screenOptions={({route})=>({
              tabBarIcon:({focused,color,size})=>{
                  let iconName;
-
                  if(route.name === 'Now Playing'){
                      iconName= focused 
                      ? 'play-circle'
@@ -272,7 +290,12 @@ const VoiceNavigation=({navigation})=>{
                 headerTintColor: '#fff',
             }}
           />
-          <Stack.Screen name="Recordings" component={SavedRecording}/>
+          <Stack.Screen name="Recordings" component={ViewRecordings} options={{
+              headerStyle: {
+                backgroundColor: 'black',
+              },
+            headerTintColor: '#fff',
+          }}/>
       </Stack.Navigator>
     )
 }
@@ -314,7 +337,8 @@ class App extends Component {
         super();
         this.state={
           isReady:false,
-          isSubscribed:true
+          isSubscribed:true,
+          data:[]
         }
     }
 
@@ -345,7 +369,6 @@ class App extends Component {
             console.log("additionalData: ", data);
            
         });
-        
         OneSignal.setInAppMessageClickHandler(respons=>{
             console.log("OneSignal IAM clicked:", respons);
             this.onReceived();
@@ -371,8 +394,7 @@ class App extends Component {
 
     
     onReceived() {
-        const {navigate} =this.props.navigation;
-        navigate('Notifications');
+        console.log('Navigate')
     }
 
 

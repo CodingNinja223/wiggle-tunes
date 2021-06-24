@@ -4,9 +4,12 @@ import {View,Text,StyleSheet} from 'react-native';
 class Watch extends Component{
     render(){
         return(
-        <View style={styles.container}>
-            <Text>Sam</Text>
-        </View>
+            <WebView
+            source={{
+            uri: 'https://www.youtube.com/channel/UCJBqTfRmBYwAQJ7k4UZud7A'
+            }}
+            
+         /> 
         )
 }
 }

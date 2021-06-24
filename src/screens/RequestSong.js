@@ -4,7 +4,7 @@ const RequestSong=()=>{
     return(
 <WebView
         source={{
-        uri: 'https://www.wiggletunes.co.za/song-history.html'
+        uri: 'https://www.wiggletunes.co.za/request-song/'
         }}
        
      />

@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,Text,StyleSheet,TouchableOpacity} from 'react-native';
+import {View,Text,StyleSheet,TouchableOpacity,ScrollView} from 'react-native';
 import {connect} from 'react-redux';
 import {clearItemFromCart,
     addItem,
@@ -8,82 +8,35 @@ import { createStructuredSelector } from 'reselect';
 import { selectCartItems,selectCartTotal } from '../../redux/cart/cart.selector';
 import { AntDesign,Entypo  } from '@expo/vector-icons'; 
 import { Thumbnail } from 'native-base';
-// import stripe from 'react-native-stripe-payments';
-import axios from 'axios';
-import { GooglePay } from 'react-native-google-pay';
-
-
+import axios from 'axios'
+// import {PayFastWebView} from "react-native-payfast";
 class Checkout extends Component{
-
-
-    purchase=()=>{
-    const {total}=this.props;
-
-    // axios.post('http://localhost:3000/create_payment_intent', {
-    //     total:total
-    //   })
-    //   .then((response)=> {
-    //     console.log(response);
-    //   })
-    //   .catch((error)=> {
-    //     console.log(error);
-    //     console.log('this not working');
-    //   });
-const allowedCardNetworks = ['VISA', 'MASTERCARD'];
-const allowedCardAuthMethods = ['PAN_ONLY', 'CRYPTOGRAM_3DS'];
-
-const requestData = {
-    cardPaymentMethod: {
-      tokenizationSpecification: {
-        type: 'PAYMENT_GATEWAY',
-        // stripe (see Example):
-        gateway: 'stripe',
-        gatewayMerchantId: '',
-        stripe: {
-          publishableKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx',
-          version: '2018-11-08',
-        },
-        // other:
-        gateway: 'example',
-        gatewayMerchantId: 'exampleGatewayMerchantId',
-      },
-      allowedCardNetworks,
-      allowedCardAuthMethods,
-    },
-    transaction: {
-      totalPrice: this.props.total,
-      totalPriceStatus: 'FINAL',
-      currencyCode: 'USD',
-    },
-    merchantName: 'Example Merchant',
-  };
-
-  GooglePay.setEnvironment(GooglePay.ENVIRONMENT_TEST);
-
-  GooglePay.isReadyToPay(allowedCardNetworks, allowedCardAuthMethods)
-  .then((ready) => {
-    if (ready) {
-      // Request payment token
-      GooglePay.requestPayment(requestData)
-        .then((data) => {
-          // Send a token to your payment gateway
-          console.log(data)
-        })
-        .catch((error) => console.log(error.code, error.message));
-    }
-  })
-
+constructor(){
+  super();
+  this.state={
+    info:[],
+    name:'Samuel'
+  }
 }
 
+    purchase=()=>{
+      axios.post('http://185.168.8.102:3000/pay', {
+        total:Math.round(this.props.total)
+      })
+      .then((response)=> {
+        console.log(response);
+      })
+      .catch((error)=> {
+        console.log(error);
+      });
+    console.log('This is logistics');
+ }
+
         render(){
-          const {clearItem,addItem,removeItem,cartItems,total}=this.props;
-          const paymentData = {
-            merchant_id : 10000100,
-            merchant_key: '46f0cd694581a',
-            amount: 60.00,
-            item_name: 'React Native Purchase'
-        };
+        console.log(this.state.info);
+        const {clearItem,addItem,removeItem,cartItems,total}=this.props;
         return(
+          <ScrollView style={styles.container}>
           <View style={styles.container}>
                 {cartItems.map(item=>(
                 <View style={{marginVertical:15}}>
@@ -110,6 +63,7 @@ const requestData = {
                   </View>
                 </View>
           </View>
+          </ScrollView>
     )
 }
 }
@@ -146,3 +100,60 @@ export default connect(mapStateToProps,mapDispatchToProps)(Checkout);
 
 
 
+// const {clearItem,addItem,removeItem,cartItems,total}=this.props;
+        // console.log('Purchase is made');
+        //   axios.post('http://185.168.8.102:3000/create_payment_intent',{
+        //     total:total
+        //   })
+        //   .then((res)=>{
+        //     console.log(res)
+        //   })
+        //   .catch((err)=>{
+        //     console.log(err)
+        //   })
+
+        // const OPTIONS = {
+      //   requestPayerName: true,
+      //   requestPayerPhone: true,
+      //   requestPayerEmail: true,
+      //   requestShipping: true
+      // };
+      // const METHOD_DATA = [{
+      //   supportedMethods: ['android-pay'],
+      //   data: {
+      //     supportedNetworks: ['visa', 'mastercard', 'amex'],
+      //     currencyCode: 'USD',
+      //     environment: 'TEST', // defaults to production
+      //     paymentMethodTokenizationParameters: {
+      //       tokenizationType: 'NETWORK_TOKEN',
+      //       parameters: {
+      //         gateway: 'stripe',
+      //         publicKey: 'pk_test_51IJJxMK275WVR6ookgavfF6Oym2fl09sZtRnn23BclXLHQEjD6rqHtwWLxm1SE90Zwvzow0uQDctVklN5SRBjIrq00h5V8icfy'
+      //       }
+      //     }
+      //   }
+      // }];
+
+      // const DETAILS = {
+      //   id: 'basic-example',
+      //   displayItems: [
+      //     {
+      //       label: 'Movie Ticket',
+      //       amount: { currency: 'USD', value: `${this.props.total}` }
+      //     }
+      //   ],
+      //   total: {
+      //     label: 'Wiggle Tunes',
+      //     amount: { currency: 'USD', value: `${this.props.total}` }
+      //   }
+      // };
+
+      // const paymentRequest = new PaymentRequest(METHOD_DATA, DETAILS,OPTIONS);
+
+      // paymentRequest.show()
+      // .then((res)=>{
+      //   console.log(res)
+      // })
+      // .catch(err=>{
+      //   console.log(err)
+      // })

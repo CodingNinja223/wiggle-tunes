@@ -8,11 +8,11 @@ import AudioRecorderPlayer, {
      AudioSourceAndroidType,
 } from 'react-native-audio-recorder-player';
 import {Card,Title,Divider} from 'react-native-paper'
-import { Entypo,AntDesign} from '@expo/vector-icons'; 
+import { Entypo,AntDesign, Octicons } from '@expo/vector-icons'; 
 import { Modal, Portal, Button, Provider } from 'react-native-paper';
-// import SoundRecorder from 'react-native-sound-recorder';
-
-
+// import RNFS from 'react-native-fs';
+import RNSmtpMailer from "react-native-smtp-mailer";
+import {storage} from '../util/firebase';
 
 
 class VoiceMessage extends Component {
@@ -33,10 +33,6 @@ class VoiceMessage extends Component {
     this.audioRecorderPlayer = new AudioRecorderPlayer();
     this.audioRecorderPlayer.setSubscriptionDuration(0.09);
 }
-
-
-// showModal = () =>  {this.setState({visible:true})};
-// hideModal = () => {this.setState({visible:false})};
 
 async componentDidMount(){
   if (Platform.OS === 'android') {
@@ -70,6 +66,7 @@ async componentDidMount(){
 }
 
 onStartRecord = async () =>{
+  // const path=RNFS.DocumentDirectoryPath ='/test.mp4'
   const audioSet = {
     AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
     AudioSourceAndroid: AudioSourceAndroidType.MIC,
@@ -95,6 +92,7 @@ onStartRecord = async () =>{
     isRecording:true
   })
 
+
 }
 
 onStopRecord = async () =>{
@@ -111,7 +109,16 @@ const result = await this.audioRecorderPlayer.stopRecorder();
    this.setState({
     isRecording:false
   })
-
+  let storageRef=storage.ref();
+  let metadata={
+    contentType:'audio/mp4'
+  }
+  
+  let filePath=this.state.recordingdata;
+  const voiceRef=storageRef.child(`voices/${this.state.recordingdata}`)
+  let blob=new Blob([filePath],{type:'audio/mp3'});
+  voiceRef.put(blob);
+    
 }
 
 onStartPlay = async (e) => {
@@ -153,6 +160,33 @@ onStartPlay = async (e) => {
     
  }
 
+ ViewRecordings=()=>{
+   this.props.navigation.navigate('Recordings');
+ }
+
+ sendMessage=()=>{
+  RNSmtpMailer.sendMail({
+    mailhost: "smtp.wiggletunes.co.za",
+    port: "587",
+    ssl: true, // optional. if false, then TLS is enabled. Its true by default in android. In iOS TLS/SSL is determined automatically, and this field doesn't affect anything
+    username: "transport@wiggletunes.co.za",
+    password: "WigTr@123%_12",
+    fromName: "transport@wiggletunes.co.za", // optional
+    replyTo: "coder@wiggledigital.co.za", // optional
+    recipients: "coder@wiggledigital.co.za",
+    subject: "Wiggle Tunes Audio Recording",
+    htmlBody: "<h1>Auido Recoridng</h1><p>Auido Recoridng</p>",
+    attachmentPaths: [
+      // RNFS.ExternalDirectoryPath + "/image.jpg",
+      this.state.recordingdata
+    ], // optional
+    attachmentNames: [
+      "audio.mp4",
+    ], // required in android, these are renames of original files. in ios filenames will be same as specified in path. In a ios-only application, no need to define it
+  })
+  .then(success => console.log(success))
+  .catch(err => console.log(err));
+ }
 
     render(){
       console.log(this.state.recordingdata)
@@ -169,20 +203,23 @@ onStartPlay = async (e) => {
             
           <View style={{justifyContent:'flex-end',alignItems:'center',flex:1}}>
             <View style={{flexDirection:'row'}}>
-              {/* <View >
-              <TouchableOpacity onPress={()=>this.ViewRecordings}>
-              <Entypo name="menu" size={35} color="red"  />
-              </TouchableOpacity>
-              </View> */}
-               { this.state.isRecording === false ?(  <TouchableOpacity >
-            <Entypo name="controller-record" size={35} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
-            </TouchableOpacity>)
-            :
-            (<TouchableOpacity>
-             <Entypo name="controller-stop" size={35} color="red" onPress={()=> this.onStopRecord()} style={{marginBottom:15}}/>
-            </TouchableOpacity>)}
+                <View >
+                <TouchableOpacity onPress={()=>this.ViewRecordings()}>
+                <Entypo name="menu" size={35} color="red"  />
+                </TouchableOpacity>
+                </View>
+                <View>
+                    { this.state.isRecording === false ?(  <TouchableOpacity >
+                  <Entypo name="controller-record" size={35} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
+                  </TouchableOpacity>)
+                  :
+                  (<TouchableOpacity>
+                  <Entypo name="controller-stop" size={35} color="red" onPress={()=> this.onStopRecord()} style={{marginBottom:15}}/>
+                  </TouchableOpacity>)}
+                </View>
             </View>
           </View>
+         
           <Portal>
             <Modal visible={this.state.visible} onDismiss={this.hideModal} style={styles.containerStyle}>
                <Text style={styles.colortime}>Save recording</Text>
@@ -196,7 +233,6 @@ onStartPlay = async (e) => {
               </View>
             </Modal>
           </Portal>
-{/* 
             <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
             <TouchableOpacity style={styles.flexContainer}  onPress={()=> this.onStartPlay()}>
              <AntDesign name="play" size={24} color="white" />
@@ -222,8 +258,16 @@ onStartPlay = async (e) => {
                <Text>{'  '}</Text>
                 <Text style={styles.color}>STOP</Text>
             </TouchableOpacity>
-            */}
-          
+            <TouchableOpacity 
+            style={styles.flexContainer} 
+             onPress={()=>this.sendMessage()}
+             >
+                <Entypo name="controller-stop" size={24} color="white" />
+                <Text>{'  '}</Text> 
+               <Text>{'  '}</Text>
+                <Text style={styles.color}>SEND RECORDING</Text>
+            </TouchableOpacity>
+           
         </Card>
         </Provider>
     )

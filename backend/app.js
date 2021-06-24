@@ -1,45 +1,111 @@
 const express =require('express');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')('pk_test_51IJJxMK275WVR6ookgavfF6Oym2fl09sZtRnn23BclXLHQEjD6rqHtwWLxm1SE90Zwvzow0uQDctVklN5SRBjIrq00h5V8icfy');
-const cors =require('cors');
+const paypal = require('paypal-rest-sdk');const cors =require('cors');
 
 const app=express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}))
 
 
-app.use(cors());
-console.log("Its working");
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-  );
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
+paypal.configure({
+  'mode': 'sandbox', //sandbox or live
+  'client_id': 'AW7csyPvcIcHCvwhR4uNKtBWIVIBUJ3pqjUqOE-vmf1imU42weUQUsSybNl62q6smL_TTlYW-rw5Pxyb',
+  'client_secret': 'EMPvbzsmxAB0I_UluZ93F0HsRrr3RhUjTuPAK4O0_v8lw-ZGW0raHlhGn1uCzkIB2cQkzqKYQ65PcUWU'
 });
 
-app.post('/create_payment_intent', (req,res,next)=>{
-  const total=req.body.total;
-  console.log(total);
-  // res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  // const intent = await stripe.paymentIntents.create({
-  //   amount: total,
-  //   currency: 'zar',
-  //   payment_method_types: ['card_present'],
-  //   capture_method: 'manual',
-  // });
-  // res.json({client_secret:intent.client_secret})
-  // console.log('CORS-enabled web server listening on port 80')
-  next();
+app.use(cors());
+
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader(
+//     'Access-Control-Allow-Methods',
+//     'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+//   );
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   next();
+// });
+
+
+
+
+app.post('/pay', async (req,res,next)=>{
+    console.log('Its working');
+    const total=req.body.total;
+    console.log(total);
+    const create_payment_json = {
+      "intent": "sale",
+      "payer": {
+          "payment_method": "paypal"
+      },
+      "redirect_urls": {
+          "return_url": "http://localhost:3000/success",
+          "cancel_url": "http://localhost:3000/cancel"
+      },
+      "transactions": [{
+          "item_list": {
+              "items": [{
+                  "name": "Redhock Bar Soap",
+                  "sku": "001",
+                  "price": total,
+                  "currency": "USD",
+                  "quantity": 1
+              }]
+          },
+          "amount": {
+              "currency": "USD",
+              "total": total
+          },
+          "description": "Washing Bar soap"
+      }]
+  };
+  
+  paypal.payment.create(create_payment_json, (error, payment)=> {
+    if (error) {
+        throw error;
+    } else {
+        for(let i = 0;i < payment.links.length;i++){
+          if(payment.links[i].rel === 'approval_url'){
+            res.redirect(payment.links[i].href);
+          }
+        }
+    }
+  });
+    next();
 })
 
+app.get('/success', (req, res) => {
+  const payerId = req.query.PayerID;
+  const paymentId = req.query.paymentId;
+
+  const execute_payment_json = {
+    "payer_id": payerId,
+    "transactions": [{
+        "amount": {
+            "currency": "USD",
+            "total": "25.00"
+        }
+    }]
+  };
+
+// Obtains the transaction details from paypal
+  paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+      //When error occurs when due to non-existent transaction, throw an error else log the transaction details in the console then send a Success string reposponse to the user.
+    if (error) {
+        console.log(error.response);
+        throw error;
+    } else {
+        console.log(JSON.stringify(payment));
+        res.send('Success');
+    }
+});
+});
+
+app.get('/cancel', (req, res) => res.send('Cancelled'));
 
 
+const hostname="185.168.8.102";
+const port="3000";
+app.listen(port,hostname,()=>{
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
 
-
-app.listen(3000);

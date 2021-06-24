@@ -4,6 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 import {db} from '../util/firebase';
 
 
+
 class Notifications extends Component{
     constructor(){
         super()
@@ -44,7 +45,6 @@ async componentDidMount(){
 }
 
 deleteNotification=async(id)=>{
- 
     const snapshot = await db.collection('Notifications').get();
     snapshot.forEach((doc)=>{
         db.collection('Notifications').doc(doc.id).delete();
@@ -56,25 +56,24 @@ deleteNotification=async(id)=>{
   const id=this.state.Notification.map(item=>{
       return item.id;
   })
-
+  console.log(this.state.Notification);
         return(
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.container}>
-               <Text style={styles.color}>Push notifications</Text>
-                 {this.state.Notification.map(item=>(
-                     item.Data.Notification.map(item=>(
-                        <View key={item.androidNotificationId} style={styles.card}>
-                            <TouchableOpacity  style={{justifyContent:'flex-end',alignItems:'flex-end'}} >
-                              <AntDesign name="close" size={24} color="black" onPress={ this.deleteNotification.bind(this,id)} />
-                            </TouchableOpacity>
-                        <Text style={{color:'black',textAlign:'center',fontSize:25}} >{item.notification.title}</Text>
-                        <Text style={{color:'black',textAlign:'center'}} >{item.notification.body}</Text>
-                        <View style={{justifyContent:'center',alignItems:'center'}}>
-                        <Image source={{uri:`${item.notification.bigPicture}`}} style={{height:100,width:200,marginTop:10}}/>
-                        </View>
-                       </View>
-                     ))
-                 ))}
+                        {this.state.Notification.map(item=>(
+                            item.Data.Notification.map(item=>(
+                             <View key={item.androidNotificationId} style={styles.card}>
+                                    <TouchableOpacity  style={{justifyContent:'flex-end',alignItems:'flex-end'}} >
+                                    <AntDesign name="close" size={24} color="black" onPress={ this.deleteNotification.bind(this,id)} />
+                                    </TouchableOpacity>
+                                <Text style={{color:'black',textAlign:'center',fontSize:25}} >{item.notification.title}</Text>
+                                <Text style={{color:'black',textAlign:'center'}} >{item.notification.body}</Text>
+                                <View style={{justifyContent:'center',alignItems:'center'}}>
+                                <Image source={{uri:`${item.notification.bigPicture}`}} style={{height:100,width:200,marginTop:10}}/>
+                                </View>
+                            </View>
+                            ))
+                        ))}
                  </View>
             </ScrollView>
         )
