@@ -44,12 +44,11 @@ export default class Radio extends Component {
 				interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
 				playThroughEarpieceAndroid: false,
 			})
-
 			this.loadAudio()
 		} catch (e) {
 			console.log(e)
 		}
-	}
+ }
 
 	async loadAudio() {
 		const { currentIndex, isPlaying, volume,rate } = this.state
@@ -104,7 +103,7 @@ export default class Radio extends Component {
 		const previous2=document.querySelector(".radioco_next").style.color="white";
 		const con=document.querySelectorAll('image').style.borderRadius="50px";
         })();`;
-		
+
 		return (
 			<ScrollView style={styles.container}>
                   <View style={styles.box}>
@@ -156,7 +155,7 @@ export default class Radio extends Component {
 							  style={styles.imagestyle}
 							 />
 							 </View>
-							  <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text> 
+							  {/* <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text>  */}
 						</TouchableOpacity>
 					  )}
 					/>
@@ -197,7 +196,7 @@ export default class Radio extends Component {
 							  style={styles.imagestyle}
 							 />
 							 </View>
-							  <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text> 
+							  {/* <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text>  */}
 						</TouchableOpacity>
 					  )}
 					/>

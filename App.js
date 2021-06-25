@@ -364,10 +364,30 @@ class App extends Component {
         OneSignal.setNotificationWillShowInForegroundHandler(async notificationReceivedEvent => {
             console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
             let notification = notificationReceivedEvent.getNotification();
+            const d=[];
+            d.push(notification)
+            console.log('This is the notification in an array', d);
+          
             console.log("notification: ", notification);
             const data = notification.additionalData;
             console.log("additionalData: ", data);
-           
+            const title=d.map(item=>{
+                return item.title;
+            })
+            const body=d.map(item=>{
+                return item.body;
+            })
+
+            const image=d.map(item=>{
+                return item.bigPicture;
+            })
+            console.log(`This is the image`,image[0],title[0],body[0])
+            await db.collection("Notifications")
+            .add({
+              title:title[0],
+              body:body[0],
+              image:image[0]
+            })
         });
         OneSignal.setInAppMessageClickHandler(respons=>{
             console.log("OneSignal IAM clicked:", respons);
@@ -376,10 +396,7 @@ class App extends Component {
 
         OneSignal.setNotificationOpenedHandler( async (notification) => {
             console.log("OneSignal: notification opened:", notification);
-            await db.collection("Notifications")
-            .add({
-              Notification:[notification]
-             })
+            
              this.onReceived();
             console.log('I am clicked by Sam')
         });
@@ -469,3 +486,4 @@ const mapStateToProps=createStructuredSelector({
 })
 
 export default connect(mapStateToProps)(App);
+

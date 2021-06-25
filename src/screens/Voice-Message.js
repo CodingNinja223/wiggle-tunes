@@ -10,7 +10,7 @@ import AudioRecorderPlayer, {
 import {Card,Title,Divider} from 'react-native-paper'
 import { Entypo,AntDesign, Octicons } from '@expo/vector-icons'; 
 import { Modal, Portal, Button, Provider } from 'react-native-paper';
-// import RNFS from 'react-native-fs';
+import * as FileSystem from 'expo-file-system';
 import RNSmtpMailer from "react-native-smtp-mailer";
 import {storage} from '../util/firebase';
 
@@ -66,7 +66,7 @@ async componentDidMount(){
 }
 
 onStartRecord = async () =>{
-  // const path=RNFS.DocumentDirectoryPath ='/test.mp4'
+  
   const audioSet = {
     AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
     AudioSourceAndroid: AudioSourceAndroidType.MIC,
@@ -165,10 +165,12 @@ onStartPlay = async (e) => {
  }
 
  sendMessage=()=>{
+  const path=this.state.recordingdata;
+
   RNSmtpMailer.sendMail({
-    mailhost: "smtp.wiggletunes.co.za",
+    mailhost: "129.232.249.150",
     port: "587",
-    ssl: true, // optional. if false, then TLS is enabled. Its true by default in android. In iOS TLS/SSL is determined automatically, and this field doesn't affect anything
+    ssl: false, // optional. if false, then TLS is enabled. Its true by default in android. In iOS TLS/SSL is determined automatically, and this field doesn't affect anything
     username: "transport@wiggletunes.co.za",
     password: "WigTr@123%_12",
     fromName: "transport@wiggletunes.co.za", // optional
@@ -177,8 +179,7 @@ onStartPlay = async (e) => {
     subject: "Wiggle Tunes Audio Recording",
     htmlBody: "<h1>Auido Recoridng</h1><p>Auido Recoridng</p>",
     attachmentPaths: [
-      // RNFS.ExternalDirectoryPath + "/image.jpg",
-      this.state.recordingdata
+     path
     ], // optional
     attachmentNames: [
       "audio.mp4",

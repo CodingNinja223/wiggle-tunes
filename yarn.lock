@@ -3668,6 +3668,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+base-64@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha1-eAqZyE59YAJgNhURxId2E78k9rs=
+
 base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
@@ -5628,6 +5633,14 @@ expo-error-recovery@~1.4.0:
   integrity sha512-NIXHe7oVfosFw/ZNZr9NBo5XJ6CmsGeK6ozldvN+RTSISmJmn+MZ3PAHuFZxLjCkOQe20J4g3S+F6aMkcD949Q==
   dependencies:
     fbjs "1.0.0"
+
+expo-file-system@^11.0.2:
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-11.0.2.tgz#c3f9b9c6ba25456a0d32c7a9bb38e55310d471bd"
+  integrity sha512-nodNvUVa+US4N4xnj5BFw8W9ZF/qCHJVC2t45cHWrBiwkVVxz45wjE7uSHUmkMWyWT7a/7AJuL3XJfYp7h90IQ==
+  dependencies:
+    "@expo/config-plugins" "^1.0.18"
+    uuid "^3.4.0"
 
 expo-file-system@~9.3.0:
   version "9.3.0"
@@ -10446,11 +10459,6 @@ react-native-audio-recorder-player@^3.0.8:
   dependencies:
     dooboolab-welcome "^1.3.0"
 
-react-native-audiowaveform@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-audiowaveform/-/react-native-audiowaveform-2.0.5.tgz#fb60fe92a81433d5394c770c1bebd81f0092420d"
-  integrity sha512-i/8RAgBGcO8EOwY8j+y56Y6tr98dU+oYWRbuujYAvcxUUYpI2knnOkVxI7d2QiOMGt2+AqesynHq031brhB1tQ==
-
 react-native-awesome-card-io@^0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/react-native-awesome-card-io/-/react-native-awesome-card-io-0.9.0.tgz#2c9e95dc790e79d6361e2ca8f32adca5a94cff45"
@@ -10493,6 +10501,14 @@ react-native-elements@^3.1.0:
     opencollective-postinstall "^2.0.3"
     react-native-ratings "8.0.4"
     react-native-size-matters "^0.3.1"
+
+react-native-fs@^2.0.1-rc.2:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.18.0.tgz#987b99cc90518ef26663a8d60e62104694b41c21"
+  integrity sha512-9iQhkUNnN2JNED0in06JwZy88YEVyIGKWz4KLlQYxa5Y2U0U2AZh9FUHtA04oWj+xt2LlHh0LFPCzhmNsAsUDg==
+  dependencies:
+    base-64 "^0.1.0"
+    utf8 "^3.0.0"
 
 react-native-gesture-handler@^1.10.3:
   version "1.10.3"
@@ -10623,11 +10639,6 @@ react-native-smtp-mailer@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/react-native-smtp-mailer/-/react-native-smtp-mailer-1.2.4.tgz#86dae238f93ed98832fefc88636fdbc977a61688"
   integrity sha512-HLgqevfRWxSUmy5lFFCff5/9URbg2mN/WXVuMIBSqGko7brcuRGk18svghqFVzP+RMFeYZrDABHW11rAmaQHog==
-
-react-native-smtp@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-smtp/-/react-native-smtp-1.1.2.tgz#4bcfe5b7c990f9aebe5467e43a04353c4c7a3329"
-  integrity sha512-QVBYC5lZ8Mw8E/LRkCK690BVCUuIXFA9nZwjTSfK1bnFcEJlSrNtzdvs2IEzZPwfRoKu76HluFhTI8WMiyqiNA==
 
 react-native-sound@^0.11.0:
   version "0.11.0"
@@ -12545,6 +12556,11 @@ use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
+
+utf8@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/utf8/-/utf8-3.0.0.tgz#f052eed1364d696e769ef058b183df88c87f69d1"
+  integrity sha512-E8VjFIQ/TyQgp+TZfS6l8yp/xWppSAHzidGiRrqe4bK4XP9pTRyKFgGJpO3SN7zdX4DeomTrwaseCHovfpFcqQ==
 
 utif@^2.0.1:
   version "2.0.1"
