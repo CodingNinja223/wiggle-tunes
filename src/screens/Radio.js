@@ -145,7 +145,7 @@ export default class Radio extends Component {
 					  renderItem={({item})=>(
                         <TouchableOpacity style={{margin:10}} onPress={()=>{
 							navigation.navigate('Podcast Detail',{
-								Data:[item]
+								Data:[item]							
 							})
 							console.log('This works')
 						}}>

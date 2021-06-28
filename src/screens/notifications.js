@@ -1,7 +1,9 @@
 import React,{Component} from 'react';
-import {View,Text,StyleSheet,Linking,Image,ScrollView, ActivityIndicator,TouchableOpacity,FlatList,RefreshControl,SafeAreaView} from 'react-native';
+import {AppState,Button,View,Text,StyleSheet,Linking,Image,ScrollView, ActivityIndicator,TouchableOpacity,FlatList,RefreshControl,SafeAreaView} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import {db} from '../util/firebase';
+import RNRestart from 'react-native-restart';
+import App from '../../App';
 
 
 
@@ -32,9 +34,10 @@ class Notifications extends Component{
 
 async componentDidMount(){
     
+
     const snapshot = await db.collection('Notifications').get();
     const pushData =[];
-    snapshot.forEach((doc)=>{
+    snapshot.forEach(async (doc)=>{
         console.log(`This data from the database`,doc.data(),doc.id)
         pushData.push({Data:doc.data(),id: doc.id })
         this.setState({
@@ -44,6 +47,8 @@ async componentDidMount(){
     })
     this.onRefresh();
 }
+
+
 
 deleteNotification=async(id)=>{
     const snapshot = await db.collection('Notifications').get();
@@ -61,12 +66,15 @@ deleteNotification=async(id)=>{
          if(this.state.isLoading){
              return(
                  <View style={styles.container}>
-                       <ActivityIndicator size="large" color="#00ff00" />
+                       <ActivityIndicator size="large" color="red" />
                  </View>
              )
          }
         return(
-            <View style={styles.container}> 
+            <View style={styles.container}>
+               <Button title="Refresh" onPress={()=>{
+                     RNRestart.Restart();
+               }}/>
             <FlatList
                refreshControl={
                    <RefreshControl

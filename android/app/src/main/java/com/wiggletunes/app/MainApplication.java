@@ -3,11 +3,10 @@ package com.wiggletunes.app;
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
-
+import com.rnfs.RNFSPackage; 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.rnsmtpmailer.RNSmtpMailerPackage;
-import com.rnsmtpmailer.RNSmtpMailerPackage;
+import com.reactnativerestart.RestartPackage;
 import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;

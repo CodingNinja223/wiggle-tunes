@@ -1,9 +1,12 @@
 import React,{Component} from "react";
 import {Text,Image,View,ScrollView,StyleSheet,TouchableOpacity} from 'react-native';
 import moment from 'moment';
+import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons'
 import { Audio } from 'expo-av';
-
+import {toggleCartHidden} from '../../redux/sound/sound';
+import { createStructuredSelector } from 'reselect';
+import {selectCartHidden} from '../../redux/sound/sound.selectors';
 
 class PodDetail extends Component{
     constructor(){
@@ -43,11 +46,13 @@ class PodDetail extends Component{
 		} catch (e) {
 			console.log(e)
 		}
-    }
+}
 
-    async loadAudio() {
+async loadAudio() {
+		const {hidden}=this.props;
 		const { currentIndex, isPlaying, volume,rate } = this.state
         const { Data } = this.props.route.params;
+		console.log(Data);
 		  const song=Data.map(item=>{
 			  return item.meta.audio_file
 		  })
@@ -56,9 +61,9 @@ class PodDetail extends Component{
 			const source = {
 				uri: song[0]
 			}
-
+			
 			const status = {
-				shouldPlay: isPlaying,
+				shouldPlay:hidden,
 				volume: volume
 			}
 
@@ -70,7 +75,7 @@ class PodDetail extends Component{
 		} catch (e) {
 			console.log(e)
 		}
-	}
+}
 
 
 	
@@ -82,15 +87,21 @@ class PodDetail extends Component{
 
 	handlePlayPause = async () => {
 		const { isPlaying, playbackInstance } = this.state
-		isPlaying ? await playbackInstance.stopAsync() : await playbackInstance.playAsync()
+		const {hidden,toggleCartHidden}=this.props;
+
+		toggleCartHidden() ? await playbackInstance.stopAsync() : await playbackInstance.playAsync()
 		this.setState({
 			isPlaying: !isPlaying
 		})
+
 	}
 
 
     render(){
         const { Data } = this.props.route.params;
+		const {hidden}=this.props;
+		const {isPlaying}=this.state;
+		console.log(hidden)
 		const song=Data.map(item=>{
 			return item.meta.audio_file
 		})
@@ -98,11 +109,11 @@ class PodDetail extends Component{
         return(
           <ScrollView style={styles.container}>
             {Data.map(item=>(
-				<View>
+				<View key={item.id}>
 				<Image source={{uri:item.episode_featured_image}} style={styles.albumCover}/>
 				<View style={styles.controls}>
 					<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
-						{this.state.isPlaying ? (
+						{hidden ? (
 							<Ionicons name='ios-pause' size={125} color='white' />
 						) : (
 							<Ionicons name='ios-play-circle' size={125} color='white' />
@@ -119,7 +130,16 @@ class PodDetail extends Component{
     }
 }
 
-export default PodDetail;
+
+const mapDispatchToProps=dispatch=>({
+	toggleCartHidden: ()=>dispatch(toggleCartHidden())
+})
+
+const mapStateToProps=createStructuredSelector({
+	hidden:selectCartHidden
+})
+
+export default connect(mapStateToProps,mapDispatchToProps)(PodDetail);
 
 
 const styles=StyleSheet.create({

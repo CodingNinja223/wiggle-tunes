@@ -13,7 +13,7 @@ import { Modal, Portal, Button, Provider } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import RNSmtpMailer from "react-native-smtp-mailer";
 import {storage} from '../util/firebase';
-
+import RNFS from 'react-native-fs';
 
 class VoiceMessage extends Component {
   constructor(props){
@@ -76,8 +76,9 @@ onStartRecord = async () =>{
   };
 
   console.log('audioSet',audioSet);
-  
-  const uri=await this.audioRecorderPlayer.startRecorder(null,audioSet,null);
+  const path = RNFS.DocumentDirectoryPath + '/test.mp4';
+  console.log(path)
+  const uri=await this.audioRecorderPlayer.startRecorder(path,audioSet,null);
   this.audioRecorderPlayer.addRecordBackListener((e) => {
     console.log('Recording . . . ', e.currentPosition);
      this.setState({
@@ -165,8 +166,8 @@ onStartPlay = async (e) => {
  }
 
  sendMessage=()=>{
-  const path=this.state.recordingdata;
-
+  
+ const date= new Date();
   RNSmtpMailer.sendMail({
     mailhost: "129.232.249.150",
     port: "587",
@@ -175,14 +176,14 @@ onStartPlay = async (e) => {
     password: "WigTr@123%_12",
     fromName: "transport@wiggletunes.co.za", // optional
     replyTo: "coder@wiggledigital.co.za", // optional
-    recipients: "coder@wiggledigital.co.za",
+    recipients: "coder@wiggledigital.co.za,producer@wiggletunes.co.za,earlmh@gmail.com",
     subject: "Wiggle Tunes Audio Recording",
     htmlBody: "<h1>Auido Recoridng</h1><p>Auido Recoridng</p>",
     attachmentPaths: [
-     path
+      RNFS.DocumentDirectoryPath + '/test.mp4'
     ], // optional
     attachmentNames: [
-      "audio.mp4",
+      `${date}.mp4`,
     ], // required in android, these are renames of original files. in ios filenames will be same as specified in path. In a ios-only application, no need to define it
   })
   .then(success => console.log(success))
