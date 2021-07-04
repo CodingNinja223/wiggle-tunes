@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,Text,StyleSheet,TouchableOpacity,ScrollView} from 'react-native';
+import {View,Text,StyleSheet,TouchableOpacity,ScrollView,Linking} from 'react-native';
 import {connect} from 'react-redux';
 import {clearItemFromCart,
     addItem,
@@ -9,7 +9,7 @@ import { selectCartItems,selectCartTotal } from '../../redux/cart/cart.selector'
 import { AntDesign,Entypo  } from '@expo/vector-icons'; 
 import { Thumbnail } from 'native-base';
 import axios from 'axios'
-// import {PayFastWebView} from "react-native-payfast";
+
 class Checkout extends Component{
 constructor(){
   super();
@@ -35,6 +35,12 @@ constructor(){
         render(){
         console.log(this.state.info);
         const {clearItem,addItem,removeItem,cartItems,total}=this.props;
+        const paymentData = {
+          merchant_id : 10000100,
+          merchant_key: '46f0cd694581a',
+          amount: 60.00,
+          item_name: 'React Native Purchase'
+      };
         return(
           <ScrollView style={styles.container}>
           <View style={styles.container}>
@@ -58,9 +64,9 @@ constructor(){
                 <Text style={{color:'white',textAlign:'center'}}>Total:R{Math.round(total)}</Text>
                 <Text>{'  '}</Text>
                   <TouchableOpacity onPress={()=>this.purchase()}>
-                      <Text style={styles.payNow}>Pay Now</Text>
+                      <Text style={styles.payNow} onPress={async ()=> await Linking.openURL('https://www.wiggletunes.co.za/shop/')}>Pay Now</Text>
                   </TouchableOpacity>
-                  </View>
+                  </View>     
                 </View>
           </View>
           </ScrollView>

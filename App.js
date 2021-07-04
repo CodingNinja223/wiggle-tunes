@@ -276,7 +276,7 @@ const ReviewNavigation=({navigation})=>{
 const VoiceNavigation=({navigation})=>{
     return(
       <Stack.Navigator>
-          <Stack.Screen name="Voice Message" component={VoiceMessage}  
+          <Stack.Screen name="Send Voice Message" component={VoiceMessage}  
             options={{
                 headerRight:()=>(
                     <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />

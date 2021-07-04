@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,Text,StyleSheet,TouchableOpacity,Platform,PermissionsAndroid,TextInput} from 'react-native';
+import {View,Text,StyleSheet,Linking,TouchableOpacity,Platform,PermissionsAndroid,TextInput, Alert,Image} from 'react-native';
 import AudioRecorderPlayer, {
      AVEncoderAudioQualityIOSType,
      AVEncodingOption,
@@ -8,12 +8,13 @@ import AudioRecorderPlayer, {
      AudioSourceAndroidType,
 } from 'react-native-audio-recorder-player';
 import {Card,Title,Divider} from 'react-native-paper'
-import { Entypo,AntDesign, Octicons } from '@expo/vector-icons'; 
+import { Entypo,AntDesign, Octicons ,Ionicons,FontAwesome5,MaterialIcons} from '@expo/vector-icons'; 
 import { Modal, Portal, Button, Provider } from 'react-native-paper';
-import * as FileSystem from 'expo-file-system';
 import RNSmtpMailer from "react-native-smtp-mailer";
 import {storage} from '../util/firebase';
 import RNFS from 'react-native-fs';
+import WaveForm from 'react-native-audiowaveform';
+
 
 class VoiceMessage extends Component {
   constructor(props){
@@ -74,9 +75,9 @@ onStartRecord = async () =>{
     AVNumberOfChannelsKeyIOS: 2,
     AVFormatIDKeyIOS: AVEncodingOption.aac,
   };
-
+  const date= new Date();
   console.log('audioSet',audioSet);
-  const path = RNFS.DocumentDirectoryPath + '/test.mp4';
+  const path = RNFS.DocumentDirectoryPath + `/audio.mp4`;
   console.log(path)
   const uri=await this.audioRecorderPlayer.startRecorder(path,audioSet,null);
   this.audioRecorderPlayer.addRecordBackListener((e) => {
@@ -167,20 +168,20 @@ onStartPlay = async (e) => {
 
  sendMessage=()=>{
   
- const date= new Date();
+  const date= new Date();
   RNSmtpMailer.sendMail({
-    mailhost: "129.232.249.150",
+    mailhost: "smtp.wiggletunes.co.za",
     port: "587",
     ssl: false, // optional. if false, then TLS is enabled. Its true by default in android. In iOS TLS/SSL is determined automatically, and this field doesn't affect anything
     username: "transport@wiggletunes.co.za",
     password: "WigTr@123%_12",
     fromName: "transport@wiggletunes.co.za", // optional
     replyTo: "coder@wiggledigital.co.za", // optional
-    recipients: "coder@wiggledigital.co.za,producer@wiggletunes.co.za,earlmh@gmail.com",
+    recipients: "coder@wiggledigital.co.za,producer@wiggletunes.co.za",
     subject: "Wiggle Tunes Audio Recording",
     htmlBody: "<h1>Auido Recoridng</h1><p>Auido Recoridng</p>",
     attachmentPaths: [
-      RNFS.DocumentDirectoryPath + '/test.mp4'
+      RNFS.DocumentDirectoryPath + `/audio.mp4`
     ], // optional
     attachmentNames: [
       `${date}.mp4`,
@@ -188,41 +189,64 @@ onStartPlay = async (e) => {
   })
   .then(success => console.log(success))
   .catch(err => console.log(err));
- }
+
+
+}
 
     render(){
       console.log(this.state.recordingdata)
+      const path = RNFS.DocumentDirectoryPath + `/audio.mp4`;
     return(
       <Provider>
         <Card style={styles.container}>
-            <View>
-               <View style={{justifyContent:'center',alignItems:'center',flex:1,marginTop:200}}>
-                  <View style={styles.circleRecord}>
+            <View >
+               <View style={{justifyContent:'center',alignItems:'center',flex:1,marginTop:100}}>
+               <Text style={{color:'white',fontSize:40,textAlign:'center',position:'absolute',right:150,bottom:10}}>                  <Entypo name="controller-record" size={40} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
+REC</Text>
+                  {/* <View style={styles.circleRecord}> */}
                        <Title style={styles.colortime}>{this.state.recordTime}</Title>
-                  </View>
+                  {/* </View> */}
                </View>
             </View>
-            
-          <View style={{justifyContent:'flex-end',alignItems:'center',flex:1}}>
-            <View style={{flexDirection:'row'}}>
-                <View >
-                <TouchableOpacity onPress={()=>this.ViewRecordings()}>
-                <Entypo name="menu" size={35} color="red"  />
-                </TouchableOpacity>
-                </View>
-                <View>
-                    { this.state.isRecording === false ?(  <TouchableOpacity >
-                  <Entypo name="controller-record" size={35} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
-                  </TouchableOpacity>)
+            <View style={{justifyContent:'center',alignItems:'center',marginTop:200}}>
+            <WaveForm 
+               onPress = {(sender) => this.onStartPlay() }
+              source={{uri:path}}  
+              style={{height:200,width:300}}
+              waveFormStyle={{waveColor:'red', scrubColor:'white',height:200}}
+            />
+              </View>
+          <View style={{justifyContent:'center',alignItems:'center',flex:1,margin:5}}>
+            <View  style={{borderColor:'white',borderWidth:1,padding:10,width:300,borderRadius:10}}>
+              <View style={{flexDirection:'row',justifyContent:'space-around'}}>
+            <TouchableOpacity style={{fontWeight:'bold',marginTop:5}} onPress={()=> this.onStartPlay()}>
+             <AntDesign name="play" size={50} color="red" />
+               <Text style={styles.color}>PLAY</Text> 
+            </TouchableOpacity>
+                <View style={{marginTop:5}}>
+                    { this.state.isRecording === false ?(  <TouchableOpacity  >
+                  <Entypo name="controller-record" style={{marginLeft:15}}  size={50} color="red" onPress={()=>this.onStartRecord()}/>
+                  <Text style={{color:'red',fontWeight:'bold'}}>Record/STOP</Text> 
+                  </TouchableOpacity>
+                  )
                   :
-                  (<TouchableOpacity>
-                  <Entypo name="controller-stop" size={35} color="red" onPress={()=> this.onStopRecord()} style={{marginBottom:15}}/>
+                  (<TouchableOpacity >
+                  <Entypo name="controller-stop" style={{marginLeft:15}}  size={50} color="red" onPress={()=> this.onStopRecord()} />
+                  <Text style={{color:'red',fontWeight:'bold'}}>Record/STOP</Text> 
                   </TouchableOpacity>)}
+                   
                 </View>
+                <TouchableOpacity 
+                style={{marginTop:5}} 
+                 onPress={()=>this.sendMessage()}
+                >
+               <MaterialIcons name="send" size={50} color="red"/>
+                <Text style={styles.color}>SEND</Text>
+            </TouchableOpacity>
+              </View>
             </View>
           </View>
-         
-          <Portal>
+          {/* <Portal>
             <Modal visible={this.state.visible} onDismiss={this.hideModal} style={styles.containerStyle}>
                <Text style={styles.colortime}>Save recording</Text>
               <View style={styles.flexContainersave}>
@@ -234,14 +258,8 @@ onStartPlay = async (e) => {
                   </TouchableOpacity>
               </View>
             </Modal>
-          </Portal>
-            <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
-            <TouchableOpacity style={styles.flexContainer}  onPress={()=> this.onStartPlay()}>
-             <AntDesign name="play" size={24} color="white" />
-               <Text>{'  '}</Text> 
-               <Text>{'  '}</Text>  
-               <Text style={styles.color}>Play</Text>
-            </TouchableOpacity>
+          </Portal> */}
+            {/* <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
             <TouchableOpacity
             style={styles.flexContainer}
              onPress={()=>this.onPausePlay()}
@@ -260,15 +278,7 @@ onStartPlay = async (e) => {
                <Text>{'  '}</Text>
                 <Text style={styles.color}>STOP</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-            style={styles.flexContainer} 
-             onPress={()=>this.sendMessage()}
-             >
-                <Entypo name="controller-stop" size={24} color="white" />
-                <Text>{'  '}</Text> 
-               <Text>{'  '}</Text>
-                <Text style={styles.color}>SEND RECORDING</Text>
-            </TouchableOpacity>
+             */}
            
         </Card>
         </Provider>
@@ -287,10 +297,12 @@ const styles=StyleSheet.create({
     alignSelf:'center'
     },
     color:{
-        color:'white',
-        marginVertical:5,
-        textAlign:'center'
-    },
+        color:'red',
+        marginRight:10,
+        textAlign:'center',
+        fontWeight:'bold',
+        fontSize:10
+          },
     flexContainer:{
         flexDirection:'row',
         backgroundColor:'red',
@@ -302,7 +314,8 @@ const styles=StyleSheet.create({
     colortime:{
         textAlign:'center',
         color:'red',
-        marginTop:20
+        marginTop:20,
+        fontSize:30
     },
     flexContainer2:{
       flexDirection:'row',
@@ -334,3 +347,5 @@ const styles=StyleSheet.create({
   }
 })
 export default VoiceMessage;
+
+//earlmh@gmail.com

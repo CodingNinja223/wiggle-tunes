@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import {AppState,Button,View,Text,StyleSheet,Linking,Image,ScrollView, ActivityIndicator,TouchableOpacity,FlatList,RefreshControl,SafeAreaView} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
+import { Avatar,Card, Title, Paragraph } from 'react-native-paper';
 import {db} from '../util/firebase';
 import RNRestart from 'react-native-restart';
 import App from '../../App';
@@ -26,8 +27,7 @@ class Notifications extends Component{
 
  onRefresh=()=>{
     this.setState({
-        refreshing:true,
-        refreshValue:this.stta
+        refreshing:true
     })
     this.wait(3000).then(()=>this.setState({refreshing:false}))
 }
@@ -72,9 +72,7 @@ deleteNotification=async(id)=>{
          }
         return(
             <View style={styles.container}>
-               <Button title="Refresh" onPress={()=>{
-                     RNRestart.Restart();
-               }}/>
+               <Button title="Refresh" color="red" onPress={()=>RNRestart.Restart()}/>
             <FlatList
                refreshControl={
                    <RefreshControl
@@ -86,17 +84,33 @@ deleteNotification=async(id)=>{
             data={this.state.Notification}
             keyExtractor={(item)=>item.id}
             renderItem={({item})=>(
-                <View key={item.androidNotificationId} style={styles.card}>
-                                   <TouchableOpacity  style={{justifyContent:'flex-end',alignItems:'flex-end'}} >
-                                   <AntDesign name="close" size={24} color="black" onPress={ this.deleteNotification.bind(this,id)} />
-                                   </TouchableOpacity>
-                               <Text style={{color:'black',textAlign:'center',fontSize:25}} >{item.Data.title}</Text>
-                               <Text style={{color:'black',textAlign:'center'}} >{item.Data.body}</Text>
-                               <View style={{justifyContent:'center',alignItems:'center'}}>
-                               <Image source={{uri:`${item.Data.image}`}} style={{height:100,width:200,marginTop:10}}/>
-                               </View>
-             </View>
-          
+            <View style={{margin:20,backgroundColor:'white'}}> 
+                <View style={{padding:10}}>    
+                    <View style={{flexDirection:'row',justifyContent:'space-between',margin:5}}>
+                        <View style={{flexDirection:'row'}}>
+                           <Text style={{color:'red'}}>Notification</Text>
+                           <Text>{'  '}</Text>
+                           <Text>{'  '}</Text>
+                           <AntDesign name="heart" size={13} color="red" style={{marginTop:5}}/>
+                        </View>
+                        <TouchableOpacity   >
+                               <AntDesign name="close" size={20} color="black" onPress={ this.deleteNotification.bind(this,id)} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{justifyContent:'flex-start',alignItems:'flex-start'}}>
+                            <Image source={{uri:`${item.Data.image}`}} style={{width:50,height:50}}/>
+                            </View>
+                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                        <View>
+                            <Text style={{margin:5,color:'black'}}>{item.Data.title}</Text>
+                            <Text style={{margin:5}}>{item.Data.body}</Text>
+                        </View>
+                        <View>
+                        </View>
+                    </View>
+                    
+                </View>
+            </View>
             )}
    />
    </View>

@@ -3,10 +3,13 @@ package com.wiggletunes.app;
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
-import com.rnfs.RNFSPackage; 
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.otomogroove.OGReactNativeWaveform.OGWavePackage;
 import com.reactnativerestart.RestartPackage;
+import com.rnfs.RNFSPackage;
+import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;

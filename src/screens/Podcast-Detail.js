@@ -46,7 +46,7 @@ class PodDetail extends Component{
 		} catch (e) {
 			console.log(e)
 		}
-}
+ }
 
 async loadAudio() {
 		const {hidden}=this.props;
@@ -93,7 +93,6 @@ async loadAudio() {
 		this.setState({
 			isPlaying: !isPlaying
 		})
-
 	}
 
 
@@ -107,10 +106,15 @@ async loadAudio() {
 		})
 		console.log(song[0])
         return(
-          <ScrollView style={styles.container}>
+          <View style={styles.container}>
             {Data.map(item=>(
-				<View key={item.id}>
+				<ScrollView key={item.id}>
 				<Image source={{uri:item.episode_featured_image}} style={styles.albumCover}/>
+			
+				<Text style={{color:'white',fontSize:25,marginTop:10,textAlign:'left'}}>{item.title.rendered}</Text>
+				{/* <Text style={{color:'white'}}>{moment().format(`${item.date}`,'MMMM Do YYYY')}</Text> */}
+			
+				<Text style={{color:'red',marginVertical:5}}>{item.type}</Text>
 				<View style={styles.controls}>
 					<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
 						{hidden ? (
@@ -120,12 +124,9 @@ async loadAudio() {
 						)}
 					</TouchableOpacity>
 				</View> 
-				<Text style={{color:'white'}}>{moment().format(`${item.date},MMM Do YY`)}</Text>
-				<Text style={{color:'white'}}>{item.title.rendered}</Text>
-				<Text style={{color:'white'}}>{item.type}</Text>
-				</View>
+				</ScrollView>
 			))}
-          </ScrollView >
+          </View >
         )
     }
 }
@@ -148,10 +149,9 @@ const styles=StyleSheet.create({
 		backgroundColor: '#161616'
 	},
 	albumCover: {
-
 		width: '100%',
-		height: 800,
-		resizeMode:'contain'
+		height:400,
+		
 	},
 	trackInfo: {
 		padding: 40,
@@ -173,9 +173,10 @@ const styles=StyleSheet.create({
 	smallText: {
 		fontSize: 16
 	},
-	// control: {
-	// 	margin: 20
-	// },
+	control: {
+		justifyContent:'center',
+		alignItems:'center'
+	},
 	// controls: {
 	// 	position:'absolute',
 	// 	top:'35%',

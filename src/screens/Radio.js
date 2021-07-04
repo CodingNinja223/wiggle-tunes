@@ -162,48 +162,6 @@ export default class Radio extends Component {
 					
 					</View>
 				</View> 
-				<View >
-					<View style={{flexDirection:'row',justifyContent:'space-between',marginTop:15}}>
-						<View style={{flexDirection:'row',marginLeft:10}}>
-						<Text style={{fontWeight:'bold',color:'white'}}>PODCASTS</Text>
-						<Text>{'  '}</Text>
-						<Text style={styles.textColor}>|</Text>
-						<Text>{'  '}</Text>
-						<Text style={styles.textColor}>CRAZY 8</Text>
-						</View>
-						<TouchableOpacity style={{marginLeft:150}} onPress={()=>{
-								this.props.navigation.navigate('Podcast')
-							}}>
-							<Text style={{color:'red'}} >See All</Text>
-						</TouchableOpacity >
-					</View>
-					<View style={{marginTop:5}}>
-					<FlatList
-					  horizontal
-					  pagingEnabled={true}
-					  showsHorizontalScrollIndicator={false}
-					  keyExtractor={item=>item.id.toString()}
-					  data={this.state.podcast}
-					  renderItem={({item})=>(
-                        <TouchableOpacity style={{margin:10}} onPress={()=>{
-							navigation.navigate('Podcast Detail',{
-								Data:[item]
-							})
-						}}>
-							<View style={styles.box}>
-                            <ImageBackground
-							  source={{uri:item.episode_featured_image}}
-							  style={styles.imagestyle}
-							 />
-							 </View>
-							  {/* <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text>  */}
-						</TouchableOpacity>
-					  )}
-					/>
-					
-					</View>
-				</View> 
-
 			</ScrollView>
 		)
 	}
@@ -230,14 +188,14 @@ const styles = StyleSheet.create({
 		zIndex:999, 
 	},
 	box:{
+		overflow:'visible',
 		shadowColor: "#ffffff",
 		shadowOffset: {
-			width: 10,
-			height: 10,
+			width: 200,
+			height: 200,
 		},
 		shadowOpacity: 2.51,
 		shadowRadius: 1.16,
-
 		elevation: 3,
 		backgroundColor:'#0000'
 	},  

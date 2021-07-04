@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import {View,StyleSheet,FlatList,TouchableOpacity,Linking,ScrollView,SafeAreaView,ActivityIndicator,ImageBackground} from 'react-native';
-import {Image} from 'react-native';
+
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons'
 import moment from 'moment';
@@ -128,7 +128,6 @@ onPlaybackStatusUpdate = status => {
         return(
           <View style={{backgroundColor:'#161616',justifyContent:'center',alignItems:'center'}}>
                <FlatList
-                numColumns={2}
                 keyExtractor={item=>item.id.toString()}
                 data={podcast} 
                 renderItem={({item})=>(
@@ -142,7 +141,10 @@ onPlaybackStatusUpdate = status => {
                                   <ImageBackground
                       source={{uri:item.episode_featured_image}}
                       style={styles.imagestyle}
-                     />
+                     >
+                  <View style={styles.overlay}></View>
+                       </ImageBackground>
+                       {/* <Text style={styles.title}>{item.title.rendered}</Text> */}
                      </View>
                       {/* <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text>  */}
                   </TouchableOpacity>
@@ -165,6 +167,26 @@ const styles=StyleSheet.create({
     justifyContent:'center',
     alignItems:'center'
     },
+    title:{
+     color:'white',
+     position:'absolute',
+     top:'50%',
+     left:'5%',
+     textAlign:'center',
+     elevation: 24,
+      zIndex:999,
+     fontSize:10
+    },
+    // overlay:{
+    //   position: 'absolute',
+    //   top: 0,
+    //   right: 0,
+    //   bottom: 0,
+    //   left: 0,
+    //   backgroundColor: 'black',
+    //   opacity: 0.6,
+    //   fontWeight:"bold"
+    // },
     controls: {
       flexDirection: 'row'
     },
@@ -175,8 +197,8 @@ const styles=StyleSheet.create({
       backgroundColor:'black'
     },
     imagestyle:{
-      width:170,
-      height:200,
+      width:400,
+      height:250,
       borderRadius:20,
       overflow:'hidden',
       shadowColor: "#ffffff",
@@ -186,22 +208,22 @@ const styles=StyleSheet.create({
       },
       shadowOpacity: 0.58,
       shadowRadius: 16.00,
-  
       elevation: 24,
       zIndex:999, 
+      resizeMode:'contain'
     },
-    box:{
-      shadowColor: "#ffffff",
-      shadowOffset: {
-        width: 10,
-        height: 10,
-      },
-      shadowOpacity: 2.51,
-      shadowRadius: 1.16,
-  
-      elevation: 3,
-      backgroundColor:'#0000'
-    },  
+    // box:{
+    //   shadowColor: "#ffffff",
+    //   shadowOffset: {
+    //     width: 10,
+    //     height: 10,
+    //   },
+    //   shadowOpacity: 2.51,
+    //   shadowRadius: 1.16,
+    //   zIndex:999, 
+    //   elevation: 3,
+    //   backgroundColor:'#ffffff'
+    // },  
     textColor:{
          color:'white',
     

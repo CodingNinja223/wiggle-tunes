@@ -2,7 +2,7 @@ import SoundActionTypes from "./sound.types";
 
 
 const INITIAL_STATE={
-    hidden:false
+    hidden:true
 }
 
 
