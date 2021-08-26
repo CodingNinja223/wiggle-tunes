@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,Text,StyleSheet,Linking,TouchableOpacity,Platform,PermissionsAndroid,TextInput, Alert,Image} from 'react-native';
+import {View,Text,StyleSheet,Linking,TouchableOpacity,Platform,PermissionsAndroid,TextInput,Image,ImageBackground,ScrollView,Dimensions,Alert} from 'react-native';
 import AudioRecorderPlayer, {
      AVEncoderAudioQualityIOSType,
      AVEncodingOption,
@@ -8,12 +8,20 @@ import AudioRecorderPlayer, {
      AudioSourceAndroidType,
 } from 'react-native-audio-recorder-player';
 import {Card,Title,Divider} from 'react-native-paper'
-import { Entypo,AntDesign, Octicons ,Ionicons,FontAwesome5,MaterialIcons} from '@expo/vector-icons'; 
+import { Entypo,AntDesign, Octicons ,Ionicons,FontAwesome5,MaterialIcons,MaterialCommunityIcons} from '@expo/vector-icons'; 
 import { Modal, Portal, Button, Provider } from 'react-native-paper';
 import RNSmtpMailer from "react-native-smtp-mailer";
-import {storage} from '../util/firebase';
+import { RNCamera } from 'react-native-camera';
+import {AdMobBanner} from 'expo-ads-admob';
 import RNFS from 'react-native-fs';
-import WaveForm from 'react-native-audiowaveform';
+import {db} from '../util/firebase'
+import * as ImagePicker from "react-native-image-picker";
+import storage from '@react-native-firebase/storage';
+import * as Progress from 'react-native-progress';
+import ImageResizer from 'react-native-image-resizer';
+import moment from 'moment'
+import {getStorage,ref} from 'firebase/firebase-storage';
+
 
 
 class VoiceMessage extends Component {
@@ -29,13 +37,34 @@ class VoiceMessage extends Component {
         duration:'00:00:00',
         recordingdata:'',
         isRecording:false,
-        visible:false
+        visible:false,
+        comments:'',
+        time:new Date().toISOString(),
+        image:'',
+        uploading:false,
+        transferred:0,
+        start:false,
+        options:false,
+        attachment:'',
+        whatsAppMessageComments:[]
     };
     this.audioRecorderPlayer = new AudioRecorderPlayer();
     this.audioRecorderPlayer.setSubscriptionDuration(0.09);
 }
 
 async componentDidMount(){
+
+  const snapshot = await db.collection('Comments').get();
+  snapshot.forEach((doc) => {
+    console.log(doc.id, '=>', doc.data());
+    const data=[];
+    data.push({id:doc.id,data:doc.data()})
+    this.setState({
+      whatsAppMessageComments:[...data],
+      options:true
+    })
+  });
+
   if (Platform.OS === 'android') {
     try {
       const grants = await PermissionsAndroid.requestMultiple([
@@ -67,7 +96,6 @@ async componentDidMount(){
 }
 
 onStartRecord = async () =>{
-  
   const audioSet = {
     AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
     AudioSourceAndroid: AudioSourceAndroidType.MIC,
@@ -93,9 +121,130 @@ onStartRecord = async () =>{
   this.setState({
     isRecording:true
   })
+}
+
+
+addAttachment =()=>{
+  const options = {
+    mediaType:'mixed',
+    maxWidth: 2000,
+    maxHeight: 2000,
+    storageOptions: {
+      skipBackup: true,
+      path: 'images'
+    }
+  };
+
+  ImagePicker.launchImageLibrary(options,response => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } else {
+      // const name=["name":"this is a long message"];
+
+      const source =  response.assets;
+      console.log(source);
+       this.setState({
+        attachment:source
+      })
+
+     const item = source.map(item=>{
+        console.log(item.uri)
+      })
+
+      const name =[{"name":"kent zam  pam dan"}];
+
+
+      name.map(item=>{
+        console.log(item.name)
+      })
+      let reference=storage().ref('attachment');
+      let task=reference.putFile(`${item}`);
+
+      task.then(()=>{
+           console.log('Image upload');
+      }).catch((e)=>{
+        console.log('this is the plan');
+      })
+      
+
+    }
+  });
 
 
 }
+
+ selectImage = () => {
+  const options = {
+    title:'WhatsApp Image',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images'
+    }
+  };
+
+  ImagePicker.launchImageLibrary(options, response => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } else {
+      
+      const source=response.uri;
+      console.log(source);
+       this.setState({
+        image:source
+      })
+
+      let reference=storage().ref('images');
+      let task=reference.putFile(source);
+
+      task.then(()=>{
+           console.log('Image upload');
+      }).catch((e)=>{
+        console.log('this is the plan');
+      })
+    }
+  });
+
+
+
+};
+
+uploadImage = async () => {
+  const { uri } = image;
+  const filename = uri.substring(uri.lastIndexOf('/') + 1);
+  const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+  this.setState({uploading:true})
+  this.setState({transferred:0})
+    
+    storage()
+    .ref(filename)
+    .putFile(uploadUri);
+
+  task.on('state_changed', snapshot => {
+    setTransferred(
+      Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+    );
+  });
+  try {
+    await task;
+  } catch (e) {
+    console.error(e);
+  }
+  Alert.alert(
+    'Photo uploaded!',
+    'Your photo has been uploaded to Firebase Cloud Storage!'
+  );
+
+  this.setState({image:null})
+};
+
 
 onStopRecord = async () =>{
 const result = await this.audioRecorderPlayer.stopRecorder();
@@ -107,19 +256,22 @@ const result = await this.audioRecorderPlayer.stopRecorder();
    this.setState({
     recordingdata:result
    })
+   this.setState({
+     start:true
+   })
 
    this.setState({
     isRecording:false
   })
-  let storageRef=storage.ref();
-  let metadata={
-    contentType:'audio/mp4'
-  }
+  // let storageRef=storage.ref();
+  // let metadata={
+  //   contentType:'audio/mp4'
+  // }
   
-  let filePath=this.state.recordingdata;
-  const voiceRef=storageRef.child(`voices/${this.state.recordingdata}`)
-  let blob=new Blob([filePath],{type:'audio/mp3'});
-  voiceRef.put(blob);
+  // let filePath=this.state.recordingdata;
+  // const voiceRef=storageRef.child(`voices/${this.state.recordingdata}`)
+  // let blob=new Blob([filePath],{type:'audio/mp3'});
+  // voiceRef.put(blob);
     
 }
 
@@ -146,6 +298,8 @@ onStartPlay = async (e) => {
    });
  };
 
+ 
+
  onPausePlay = async (e) =>{
      await this.audioRecorderPlayer.pausePlayer();
  }
@@ -166,6 +320,20 @@ onStartPlay = async (e) => {
    this.props.navigation.navigate('Recordings');
  }
 
+ sendComment= async ()=>{
+  await db.collection("Comments")
+  .add({
+    comments:this.state.comments
+  })
+
+  this.setState({
+    comments:''
+  })
+ 
+Linking.openURL(`whatsapp://send?text=${this.state.comments}&phone=+27660576802`)
+
+ }
+
  sendMessage=()=>{
   
   const date= new Date();
@@ -177,7 +345,7 @@ onStartPlay = async (e) => {
     password: "WigTr@123%_12",
     fromName: "transport@wiggletunes.co.za", // optional
     replyTo: "coder@wiggledigital.co.za", // optional
-    recipients: "coder@wiggledigital.co.za,producer@wiggletunes.co.za",
+    recipients: "producer@wiggletunes.co.za,studio@wiggletunes.co.za",
     subject: "Wiggle Tunes Audio Recording",
     htmlBody: "<h1>Auido Recoridng</h1><p>Auido Recoridng</p>",
     attachmentPaths: [
@@ -189,99 +357,107 @@ onStartPlay = async (e) => {
   })
   .then(success => console.log(success))
   .catch(err => console.log(err));
+    Alert.alert(
+      "Voice message was sent"
+    );
 
-
+    this.setState({
+      start:false
+    })
 }
 
     render(){
       console.log(this.state.recordingdata)
       const path = RNFS.DocumentDirectoryPath + `/audio.mp4`;
+      const {width, height} = Dimensions.get('window');
+       console.log("this is a whatsApp comment",this.state.whatsAppMessageComments)
     return(
-      <Provider>
-        <Card style={styles.container}>
-            <View >
-               <View style={{justifyContent:'center',alignItems:'center',flex:1,marginTop:100}}>
-               <Text style={{color:'white',fontSize:40,textAlign:'center',position:'absolute',right:150,bottom:10}}>                  <Entypo name="controller-record" size={40} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
-REC</Text>
-                  {/* <View style={styles.circleRecord}> */}
-                       <Title style={styles.colortime}>{this.state.recordTime}</Title>
-                  {/* </View> */}
-               </View>
-            </View>
-            <View style={{justifyContent:'center',alignItems:'center',marginTop:200}}>
-            <WaveForm 
-               onPress = {(sender) => this.onStartPlay() }
-              source={{uri:path}}  
-              style={{height:200,width:300}}
-              waveFormStyle={{waveColor:'red', scrubColor:'white',height:200}}
-            />
-              </View>
-          <View style={{justifyContent:'center',alignItems:'center',flex:1,margin:5}}>
-            <View  style={{borderColor:'white',borderWidth:1,padding:10,width:300,borderRadius:10}}>
-              <View style={{flexDirection:'row',justifyContent:'space-around'}}>
-            <TouchableOpacity style={{fontWeight:'bold',marginTop:5}} onPress={()=> this.onStartPlay()}>
-             <AntDesign name="play" size={50} color="red" />
-               <Text style={styles.color}>PLAY</Text> 
-            </TouchableOpacity>
-                <View style={{marginTop:5}}>
-                    { this.state.isRecording === false ?(  <TouchableOpacity  >
-                  <Entypo name="controller-record" style={{marginLeft:15}}  size={50} color="red" onPress={()=>this.onStartRecord()}/>
-                  <Text style={{color:'red',fontWeight:'bold'}}>Record/STOP</Text> 
-                  </TouchableOpacity>
-                  )
-                  :
-                  (<TouchableOpacity >
-                  <Entypo name="controller-stop" style={{marginLeft:15}}  size={50} color="red" onPress={()=> this.onStopRecord()} />
-                  <Text style={{color:'red',fontWeight:'bold'}}>Record/STOP</Text> 
-                  </TouchableOpacity>)}
-                   
-                </View>
-                <TouchableOpacity 
-                style={{marginTop:5}} 
-                 onPress={()=>this.sendMessage()}
-                >
-               <MaterialIcons name="send" size={50} color="red"/>
-                <Text style={styles.color}>SEND</Text>
-            </TouchableOpacity>
-              </View>
-            </View>
+      <ScrollView contentContainerStyle={{flex:1}}>
+      <ImageBackground source={require('../img/wallpaper.jpg')} style={{width:'100%',height:'100%'}}>
+          <ScrollView contentContainerStyle={{justifyContent:'flex-end',alignItems:'flex-end'}}>
+                 {  this.state.options === true ?
+                 (
+                   <View style={{margin:20,backgroundColor:'#bb0a21',padding:35,borderRadius:10,justifyContent:'flex-start'}}>
+                       <Text style={{color:'white'}}>Thank you for contacting Wiggle Tunes, your message has been received</Text>
+                   </View>
+                 ):(
+                   null
+                 )
+                 }
+                {this.state.options === true ? 
+                (<View>
+                   {this.state.whatsAppMessageComments.map(item=>{
+                          return(
+                            <View style={{margin:20,backgroundColor:'#7a9b76',padding:5,borderRadius:10}}>
+                            <Text key={item.id} style={{color:'white'}}>{item.data.comments}</Text>
+                            <Text>{moment().format(`MMMM Do YYYY, h:mm:ss a`)}</Text>
+                            </View>
+                            )
+                        })}
+                </View>) 
+                : 
+                ( 
+                  <View>
+                      
+                       
+                  </View>
+                )
+                }
+              {/* <Image source={{uri:this.state.image}}/>
+              <Image source={{uri:this.state.attachment}}/> */}
+               {/* <View style={styles.imageContainer}>
+                  {this.state.image !== null ? (
+                    <Image source={{ uri: image.uri }} style={styles.imageBox} />
+                  ) : null}
+                  {this.state.uploading ? (
+                    <View style={styles.progressBarContainer}>
+                      <Progress.Bar progress={transferred} width={300} />
+                    </View>
+                  ) : (
+                    <TouchableOpacity style={styles.uploadButton} onPress={()=>this.uploadImage()}>
+                      <Text style={styles.buttonText}>Upload image</Text>
+                    </TouchableOpacity>
+                  )}
+                </View> */}
+          </ScrollView>
+          <View style={{justifyContent:'center',alignItems:'center'}}>
+                    <Title style={this.state.start ? styles.colortime : {display:'none'}}>{this.state.recordTime}</Title>
+                      <View style={{flexDirection:'row'}}>
+                      <TouchableOpacity style={this.state.start ? {fontWeight:'bold',margin:10} : {display:'none'}} onPress={()=> this.onStartPlay()}>
+                        <AntDesign name="play" size={35} color="red" />
+                        {/* <Text style={styles.color}>PLAY</Text>  */}
+                        </TouchableOpacity>
+                        <TouchableOpacity style={this.state.start ? {fontWeight:'bold',margin:10} : {display:'none'}} >
+                          <MaterialIcons name="send" size={35} color="red"  onPress={()=>this.sendMessage()}/>
+                      </TouchableOpacity>
+                  </View>
           </View>
-          {/* <Portal>
-            <Modal visible={this.state.visible} onDismiss={this.hideModal} style={styles.containerStyle}>
-               <Text style={styles.colortime}>Save recording</Text>
-              <View style={styles.flexContainersave}>
-                  <Text style={styles.colortime}>{this.state.recordingdata}</Text>
-              </View>
-              <View style={styles.flexContainersave}>
-                  <TouchableOpacity onPress={this.saveRecording} style={{ backgroundColor:'transparent',justifyContent:'center',borderRadius:30,padding:10,margin:5,borderColor:'red',borderWidth:2,width:200}}>
-                     <Text style={{color:'white',textAlign:'center'}}>Save</Text>
-                  </TouchableOpacity>
-              </View>
-            </Modal>
-          </Portal> */}
-            {/* <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
-            <TouchableOpacity
-            style={styles.flexContainer}
-             onPress={()=>this.onPausePlay()}
-             >
-                <AntDesign name="pause" size={24} color="white" />
-                <Text>{'  '}</Text> 
-               <Text>{'  '}</Text>
-              <Text style={styles.color}>PAUSE</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-            style={styles.flexContainer} 
-             onPress={()=>this.onStopPlay()}
-             >
-                <Entypo name="controller-stop" size={24} color="white" />
-                <Text>{'  '}</Text> 
-               <Text>{'  '}</Text>
-                <Text style={styles.color}>STOP</Text>
-            </TouchableOpacity>
-             */}
-           
-        </Card>
-        </Provider>
+       <View >
+
+        <View style={{flexDirection:'column',justifyContent:'flex-end',alignItems:'flex-end',margin:5}}>
+            <MaterialCommunityIcons name="attachment" size={35} color="grey"  onPress={()=>this.addAttachment()}/> 
+            <MaterialIcons name="photo-camera" size={35} color="grey"  onPress={()=>this.selectImage()}/>
+                  { this.state.isRecording === false ?(  
+                    <Entypo name="controller-record" style={{marginLeft:20}}  size={35} color="gray" onPress={()=>this.onStartRecord()}/>
+                    )
+                    :
+                    (
+                    <Entypo name="controller-stop" style={{marginLeft:20}}  size={35} color="grey"  onPress={()=> this.onStopRecord()} />
+                    )}
+            <MaterialIcons name="send" size={35} color="gray" onPress={()=>this.sendComment()}/>
+        </View>
+  
+      <View style={{margin:5}}>
+        <TextInput  
+            onChangeText={(val)=>{this.setState({comments:val})}}
+           style={{width:'100%',borderRadius:30,backgroundColor:'white'}}
+            />
+      </View>
+     
+       </View>
+      
+        </ImageBackground>
+        </ScrollView>
     )
 }
 }
@@ -323,7 +499,8 @@ const styles=StyleSheet.create({
       justifyContent:'center',
       borderRadius:30,
       padding:10,
-      margin:5
+      margin:5,
+      
   },
   color2:{
     color:'black'
@@ -344,8 +521,131 @@ const styles=StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     marginVertical:10
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#bbded6'
+  },
+  selectButton: {
+    borderRadius: 5,
+    width: 150,
+    height: 50,
+    backgroundColor: '#8ac6d1',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  uploadButton: {
+    borderRadius: 5,
+    width: 150,
+    height: 50,
+    backgroundColor: '#ffb6b9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  imageContainer: {
+    marginTop: 30,
+    marginBottom: 50,
+    alignItems: 'center'
+  },
+  progressBarContainer: {
+    marginTop: 20
+  },
+  imageBox: {
+    width: 300,
+    height: 300
   }
 })
 export default VoiceMessage;
 
 //earlmh@gmail.com
+  {/* <Card style={styles.container}> */}
+            {/* <View >
+               <View style={{justifyContent:'center',alignItems:'center',flex:1,marginTop:100}}>
+               <Text style={{color:'white',fontSize:40,textAlign:'center',position:'absolute',right:150,bottom:10}}>                  <Entypo name="controller-record" size={40} color="red" onPress={()=>this.onStartRecord()} style={{marginBottom:15}}/>
+REC</Text>
+               
+                       <Title style={styles.colortime}>{this.state.recordTime}</Title>
+                 
+               </View>
+            </View> */}
+            {/* <View style={{justifyContent:'center',alignItems:'center',marginTop:200}}>
+                 
+              </View> */}
+          {/* <View style={{justifyContent:'center',alignItems:'center',flex:1,margin:5}}>
+            <View  style={{borderColor:'white',borderWidth:1,padding:10,width:300,borderRadius:10}}>
+              <View style={{flexDirection:'row',justifyContent:'space-around'}}>
+            <TouchableOpacity style={{fontWeight:'bold',marginTop:5}} onPress={()=> this.onStartPlay()}>
+             <AntDesign name="play" size={50} color="red" />
+               <Text style={styles.color}>PLAY</Text> 
+            </TouchableOpacity>
+                <View style={{marginTop:5}}>
+                    { this.state.isRecording === false ?(  <TouchableOpacity  >
+                  <Entypo name="controller-record" style={{marginLeft:20}}  size={50} color="red" onPress={()=>this.onStartRecord()}/>
+                  <Text style={{color:'red',fontWeight:'bold'}}>Record/STOP</Text> 
+                  </TouchableOpacity>
+                  )
+                  :
+                  (<TouchableOpacity >
+                  <Entypo name="controller-stop" style={{marginLeft:20}}  size={50} color="red" onPress={()=> this.onStopRecord()} />
+                  <Text style={{color:'red',fontWeight:'bold'}}>Record/STOP</Text> 
+                  </TouchableOpacity>)}
+                   
+                </View>
+                <TouchableOpacity 
+                style={{marginTop:5}} 
+                 onPress={()=>this.sendMessage()}
+                >
+               <MaterialIcons name="send" size={50} color="red"/>
+                <Text style={styles.color}>SEND</Text>
+            </TouchableOpacity>
+              </View>
+            </View>
+          </View> */}
+          {/* <AdMobBanner
+                  style={{width:'100%',height:200}}
+                  bannerSize="fullBanner"
+                  adUnitID="ca-app-pub-4848737122422413/6221324032"
+                  servePersonalizedAds 
+                  onDidFailToReceiveAdWithError={this.bannerError} /> */}
+          {/* <Portal>
+            <Modal visible={this.state.visible} onDismiss={this.hideModal} style={styles.containerStyle}>
+               <Text style={styles.colortime}>Save recording</Text>
+              <View style={styles.flexContainersave}>
+                  <Text style={styles.colortime}>{this.state.recordingdata}</Text>
+              </View>
+              <View style={styles.flexContainersave}>
+                  <TouchableOpacity onPress={this.saveRecording} style={{ backgroundColor:'transparent',justifyContent:'center',borderRadius:30,padding:10,margin:5,borderColor:'red',borderWidth:2,width:200}}>
+                     <Text style={{color:'white',textAlign:'center'}}>Save</Text>
+                  </TouchableOpacity>
+              </View>
+            </Modal>
+          </Portal> */}
+            {/* <Title style={styles.colortime}>{this.state.playTime} / {this.state.duration}</Title>
+            <TouchableOpacity
+            style={styles.flexContainer}
+             onPress={()=>this.onPausePlay()}
+             >
+                <AntDesign name="pause" size={24} color="white" />
+                <Text>{'  '}</Text> 
+               <Text>{'  '}</Text>
+              <Text style={styles.color}>PAUSE</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+            style={styles.flexContainer} 
+             onPress={()=>this.onStopPlay()}
+             >
+                <Entypo name="controller-stop" size={24} color="white" />
+                <Text>{'  '}</Text> 
+               <Text>{'  '}</Text>
+                <Text style={styles.color}>STOP</Text>
+            </TouchableOpacity>
+             */}
+           
+        {/* </Card> */}

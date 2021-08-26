@@ -1,20 +1,9 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 // import VideoRecorder from 'react-native-beautiful-video-recorder';
+// import RNFS from 'react-native-fs';
+// import RNSmtpMailer from "react-native-smtp-mailer";
 
-
-const PendingView = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: 'lightgreen',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Text>Waiting</Text>
-  </View>
-);
 
 class VideoMessage extends Component{
   constructor(){
@@ -24,21 +13,21 @@ class VideoMessage extends Component{
     }
   }
 
-  start =()=>{
-     //30 seconds
-     this.videoRecorder.open({maxLength:30},(data)=>{
-       console.log('captured data', data)
-       this.setState({
-         data:data
-       })
-     })
-  }
+  // start =()=>{
+  //    //30 seconds
+  //    this.videoRecorder.open({maxLength:30},(data)=>{
+  //      console.log('captured data', data)
+  //      this.setState({
+  //        data:data
+  //      })
+  //    })
+  // }
 
 
   render(){
     return(
-      <View style={styles.container}>
-       
+      <View >
+           
       </View>
     )
   }

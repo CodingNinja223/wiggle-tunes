@@ -1,6 +1,5 @@
 import React,{Component} from "react";
 import {Text,Image,View,ScrollView,StyleSheet,TouchableOpacity} from 'react-native';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons'
 import { Audio } from 'expo-av';
@@ -51,15 +50,15 @@ class PodDetail extends Component{
 async loadAudio() {
 		const {hidden}=this.props;
 		const { currentIndex, isPlaying, volume,rate } = this.state
-        const { Data } = this.props.route.params;
-		console.log(Data);
+        const { Data,image,title,type,music} = this.props.route.params;
+		console.log(music);
 		  const song=Data.map(item=>{
 			  return item.meta.audio_file
 		  })
 		try {
 			const playbackInstance = new Audio.Sound()
 			const source = {
-				uri: song[0]
+				uri:song[0]
 			}
 			
 			const status = {
@@ -88,32 +87,27 @@ async loadAudio() {
 	handlePlayPause = async () => {
 		const { isPlaying, playbackInstance } = this.state
 		const {hidden,toggleCartHidden}=this.props;
-
-		toggleCartHidden() ? await playbackInstance.stopAsync() : await playbackInstance.playAsync()
-		this.setState({
-			isPlaying: !isPlaying
-		})
+		toggleCartHidden() ? await playbackInstance.pauseAsync() : await playbackInstance.playAsync()
 	}
 
 
     render(){
-        const { Data } = this.props.route.params;
+        const { Data,image,title,type,music } = this.props.route.params;
 		const {hidden}=this.props;
-		const {isPlaying}=this.state;
-		console.log(hidden)
 		const song=Data.map(item=>{
 			return item.meta.audio_file
 		})
-		console.log(song[0])
+		console.log("This is the sound",song)
         return(
           <View style={styles.container}>
-            {Data.map(item=>(
-				<ScrollView key={item.id}>
-				<Image source={{uri:item.episode_featured_image}} style={styles.albumCover}/>
+			{Data.map(item=>(
+                <ScrollView >
+				<Image source={{uri:item.episode_featured_image}} style={{
+		          width: '100%',
+		          height:400,
+	            }}/>
 			
-				<Text style={{color:'white',fontSize:25,marginTop:10,textAlign:'left'}}>{item.title.rendered}</Text>
-				{/* <Text style={{color:'white'}}>{moment().format(`${item.date}`,'MMMM Do YYYY')}</Text> */}
-			
+				<Text style={{color:'white',fontSize:25,marginTop:10,textAlign:'left'}}>{item.title.rendered.replace('&#8211;','-')}</Text>			
 				<Text style={{color:'red',marginVertical:5}}>{item.type}</Text>
 				<View style={styles.controls}>
 					<TouchableOpacity style={styles.control} onPress={this.handlePlayPause}>
@@ -126,7 +120,7 @@ async loadAudio() {
 				</View> 
 				</ScrollView>
 			))}
-          </View >
+          </View>
         )
     }
 }

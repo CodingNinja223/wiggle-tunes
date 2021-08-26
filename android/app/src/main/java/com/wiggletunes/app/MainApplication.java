@@ -6,7 +6,9 @@ import android.net.Uri;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.otomogroove.OGReactNativeWaveform.OGWavePackage;
+import com.imagepicker.ImagePickerPackage;
+import com.imagepicker.ImagePickerPackage;
+import org.reactnative.camera.RNCameraPackage;
 import com.reactnativerestart.RestartPackage;
 import com.rnfs.RNFSPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;

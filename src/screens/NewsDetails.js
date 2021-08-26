@@ -26,8 +26,9 @@ class NewsDetail extends Component{
 const styles=StyleSheet.create({
     image:{
     
-        resizeMode:'contain',
-        height:500
+     
+        height:300,
+        width:'100%'
     },
 
     content:{

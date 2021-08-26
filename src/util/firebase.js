@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/firebase-firestore'
+import {getStorage,ref} from 'firebase/firebase-storage';
 
 
 

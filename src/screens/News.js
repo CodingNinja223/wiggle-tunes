@@ -21,8 +21,7 @@ class News extends Component{
             isLoading:false
         })
     })
-  
-   }
+}
 
     render(){
       const {posts}=this.state;
@@ -36,24 +35,23 @@ class News extends Component{
         }
         return(
           <ScrollView style={{backgroundColor:'#161616'}}>
-
-          <FlatList
-            keyExtractor={item=> item.id.toString()}
-            data={posts}
-             renderItem={({item})=>(
-            <TouchableOpacity onPress={()=>{
-                this.props.navigation.navigate('Detail',{
-                    itemId:item.id,
-                    image:item.featured_image_urls.medium,
-                    content:item.content.rendered.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, ''),
-                    headerTitle:item.title.rendered
-                })
-            }}>   
+            <FlatList
+              keyExtractor={item=> item.id.toString()}
+              data={posts}
+              renderItem={({item})=>(
+              <TouchableOpacity onPress={()=>{
+                  this.props.navigation.navigate('Detail',{
+                      itemId:item.id,
+                      image:item.featured_image_urls.medium,
+                      content:item.content.rendered.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, ''),
+                      headerTitle:item.title.rendered
+                  })
+              }}>   
                <Card>
                     <CardItem>
                       <Left style={{flex:0.8}}>
                         <Body>
-                          <Text note style={{fontWeight:'bold',fontSize:17}}>{item.title.rendered.replace(/&#8217;/g, "'")}</Text>
+                          <Text note style={{fontWeight:'bold',fontSize:17}}>{item.title.rendered.replace(/&#8217;/g, "'").replace('&amp;','&')}</Text>
                         </Body>
                       </Left>
                       <Right style={{flex:0.2}}>
@@ -61,7 +59,7 @@ class News extends Component{
                       </Right>
                     </CardItem>
                     <CardItem cardBody>
-                      <Image source={{ uri:item.featured_image_urls.medium }}style={{ width:'100%', height: 170,resizeMode:'cover' }}  />
+                      <Image source={{ uri:item.featured_image_urls.medium }} style={{ width:'100%', height: 170,resizeMode:'cover' }}  />
                     </CardItem>
                     <CardItem content style={{margin:10}}>
                      <Text note numberOfLines={1}>{item.content.rendered.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, '').replace(/&#39;/g, "'").replace(/&#8217;/g, "'").replace(/&nbsp;/g, " ").replace(/&#8211;/g, "-").replace(/&gt;/g, ">").replace(/&#8216;/g, "'").replace(/&#8221;/g, ' " ' ).replace(/&#8230;/g, ' ... ' ).replace(/&mdash;/g, ' -- ' ).replace(/&quot;/g, '"').replace(/&#8220;/g, '"')}</Text>

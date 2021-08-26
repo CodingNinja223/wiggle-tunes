@@ -3,6 +3,7 @@ import {AppState,Button,View,Text,StyleSheet,Linking,Image,ScrollView, ActivityI
 import { AntDesign } from '@expo/vector-icons'; 
 import { Avatar,Card, Title, Paragraph } from 'react-native-paper';
 import {db} from '../util/firebase';
+import {AdMobBanner} from 'expo-ads-admob';
 import RNRestart from 'react-native-restart';
 import App from '../../App';
 
@@ -33,8 +34,6 @@ class Notifications extends Component{
 }
 
 async componentDidMount(){
-    
-
     const snapshot = await db.collection('Notifications').get();
     const pushData =[];
     snapshot.forEach(async (doc)=>{
@@ -73,7 +72,7 @@ deleteNotification=async(id)=>{
         return(
             <View style={styles.container}>
                <Button title="Refresh" color="red" onPress={()=>RNRestart.Restart()}/>
-            <FlatList
+               <FlatList
                refreshControl={
                    <RefreshControl
                      refreshing={this.state.refreshing}
@@ -113,6 +112,12 @@ deleteNotification=async(id)=>{
             </View>
             )}
    />
+                 <AdMobBanner
+                  style={{width:'100%',height:200}}
+                  bannerSize="fullBanner"
+                  adUnitID="ca-app-pub-4848737122422413/6221324032" // Test ID, Replace with your-admob-unit-id
+                  servePersonalizedAds // true or false
+                  onDidFailToReceiveAdWithError={this.bannerError} />
    </View>
         )
     }

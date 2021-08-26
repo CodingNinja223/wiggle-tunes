@@ -8,6 +8,16 @@ import {addItem} from '../../redux/cart/cart.actions'
 
 class ProductDetail extends Component{
 
+
+
+  pickerCallback = message => {
+    if (message && message.nativeEvent && message.nativeEvent.data) {
+      console.log(message.nativeEvent.data); 
+    }
+  };
+
+
+
   render(){
   const {productTitle,productImage,productPrice, productId}=this.props.route.params;
  console.log(this.props.route.params);

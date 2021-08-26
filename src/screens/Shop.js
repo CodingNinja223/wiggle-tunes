@@ -95,13 +95,13 @@ constructor(){
 const styles=StyleSheet.create({
   wrap:{
     flex:1,
-    flexWrap: 'wrap',
     flexDirection: 'row',
     padding:5,
     justifyContent:'center',
   },
   product: {
-    height: 300
+    height: 350,
+    justifyContent:'center'
   },
   touchable: {
     borderRadius: 10,
@@ -123,11 +123,12 @@ const styles=StyleSheet.create({
   },
   details: {
     alignItems: 'center',
+    justifyContent:'center',
     height: '17%',
     padding: 10
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     marginVertical: 2
   },
   price: {
@@ -136,7 +137,7 @@ const styles=StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     height: '23%',
     paddingHorizontal: 20

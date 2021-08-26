@@ -2,13 +2,13 @@ import React,{Component} from 'react';
 import { StyleSheet, TouchableOpacity, View, Text,Dimensions,FlatList,ScrollView,ImageBackground,Image } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Audio } from 'expo-av';
-import {WebView} from 'react-native-webview';
+import {connect} from 'react-redux';
 import {AdMobBanner} from 'expo-ads-admob';
-import {Content, Card, CardItem, Thumbnail,  Button,Left, Body, } from 'native-base';
-import moment from 'moment';
+import { SoundCard} from '../../redux/sound/sound';
+import { createStructuredSelector } from 'reselect';
+import {selectPodcastData} from '../../redux/sound/sound.selectors';
 
-
-export default class Radio extends Component {
+ class Radio extends Component {
 	state = {
 		isPlaying: false,
 		playbackInstance: null,
@@ -29,6 +29,8 @@ export default class Radio extends Component {
 	async componentDidMount() {
 		const response = await fetch('https://wiggletunes.co.za/wp-json/wp/v2/podcast');
 		const data = await response.json();
+		
+		this.props.SoundCard(data);
 		this.setState({
 		  podcast:[...data],
 		  isLoading:false
@@ -92,17 +94,6 @@ export default class Radio extends Component {
 
 	render() {
 		const {navigation}=this.props;
-		const myScript =`(function() {
-		const body=document.body.style.backgroundColor="#161616";
-        const next=document.querySelector(".radioco_song").style.fontSize="35px";
-		const next1=document.querySelector(".radioco_song").style.paddingTop="20px";
-		const next2=document.querySelector(".radioco_song").style.lineHeight="1.5em";
-		const next3=document.querySelector(".radioco_song").style.color="white";
-		const previous=document.querySelector(".radioco_next").style.fontSize="30px";
-		const previous1=document.querySelector(".radioco_next").style.paddingTop="20px";
-		const previous2=document.querySelector(".radioco_next").style.color="white";
-		const con=document.querySelectorAll('image').style.borderRadius="50px";
-        })();`;
 
 		return (
 			<ScrollView style={styles.container}>
@@ -118,6 +109,12 @@ export default class Radio extends Component {
 						)}
 					</TouchableOpacity>
 				</View> 
+				<AdMobBanner
+                  style={{width:'100%',height:50}}
+                  bannerSize="fullBanner"
+                  adUnitID="ca-app-pub-4848737122422413/6221324032" // Test ID, Replace with your-admob-unit-id
+                  servePersonalizedAds // true or false
+                  onDidFailToReceiveAdWithError={this.bannerError} />
 				  <View style={{backgroundColor:'white',width:'80%',height:1,marginHorizontal:40,opacity:0.1}}>
 				 </View>
 				 <View >
@@ -127,12 +124,12 @@ export default class Radio extends Component {
 						<Text>{'  '}</Text>
 						<Text style={styles.textColor}>|</Text>
 						<Text>{'  '}</Text>
-						<Text style={styles.textColor}>CRAZY 8</Text>
+						<Text style={{fontWeight:'bold',color:'white'}}>Episodes</Text>
 						</View>
 						<TouchableOpacity style={{marginLeft:150}} onPress={()=>{
 								this.props.navigation.navigate('Podcast')
 							}}>
-							<Text style={{color:'red'}} >See All</Text>
+							<Text style={{color:'red'}}>See All</Text>
 						</TouchableOpacity >
 					</View>
 					<View style={{marginTop:5}}>
@@ -140,14 +137,13 @@ export default class Radio extends Component {
 					  horizontal
 					  pagingEnabled={true}
 					  showsHorizontalScrollIndicator={false}
-					  keyExtractor={item=>item.id.toString()}
-					  data={this.state.podcast}
+					  keyExtractor={item=>item.id}
+					  data={this.props.itemC}
 					  renderItem={({item})=>(
                         <TouchableOpacity style={{margin:10}} onPress={()=>{
 							navigation.navigate('Podcast Detail',{
 								Data:[item]							
 							})
-							console.log('This works')
 						}}>
 							<View style={styles.box}>
                             <ImageBackground
@@ -155,17 +151,26 @@ export default class Radio extends Component {
 							  style={styles.imagestyle}
 							 />
 							 </View>
-							  {/* <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text>  */}
 						</TouchableOpacity>
 					  )}
 					/>
 					
 					</View>
 				</View> 
+				
 			</ScrollView>
 		)
 	}
 }
+
+const mapDispatchToProps = dispatch =>({
+ SoundCard:item =>dispatch(SoundCard(item))
+})
+
+const mapStateToProps=createStructuredSelector({
+ itemC:selectPodcastData
+})
+
 
 const styles = StyleSheet.create({
 	container: {
@@ -191,10 +196,10 @@ const styles = StyleSheet.create({
 		overflow:'visible',
 		shadowColor: "#ffffff",
 		shadowOffset: {
-			width: 200,
-			height: 200,
+			width: 400,
+			height: 400,
 		},
-		shadowOpacity: 2.51,
+		shadowOpacity: 0.58,
 		shadowRadius: 1.16,
 		elevation: 3,
 		backgroundColor:'#0000'
@@ -245,120 +250,5 @@ const styles = StyleSheet.create({
 	}
 })
 
-/*
- 
 
-<View style={{height:'150%',padding:30}}>
-				<WebView
-				source={{
-				uri: 'https://www.wiggletunes.co.za/Current-Song.html'
-				}}
-				injectedJavaScript={myScript}
-				javaScriptEnabled={true}
-				style={{width: Dimensions.get('window').width,height:800,resizeMode:'cover',position:'relative',right:25,bottom:25,top:0}}
-				/>
-				</View>
-
-				 <View >
-					<View style={{flexDirection:'row',justifyContent:'space-between',margin:5}}>
-						<View style={{flexDirection:'row',marginLeft:10}}>
-						<Text style={{fontWeight:'bold',color:'white'}}>PODCASTS</Text>
-						<Text>{'  '}</Text>
-						<Text style={styles.textColor}>|</Text>
-						<Text>{'  '}</Text>
-						<Text style={styles.textColor}>CRAZY 8</Text>
-						</View>
-						<View style={{marginLeft:180}}>
-							<Text style={{color:'red'}}>See All</Text>
-						</View>
-					</View>
-					<View style={{marginTop:40}}>
-					<FlatList
-					  horizontal
-					  pagingEnabled={true}
-					  showsHorizontalScrollIndicator={false}
-					  keyExtractor={item=>item.id.toString()}
-					  data={this.state.podcast}
-					  renderItem={({item})=>(
-                        <TouchableOpacity style={{margin:10}} onPress={()=>{
-							navigation.navigate('Podcast Detail',{
-								Data:item
-							})
-						}}>
-							<View style={styles.box}>
-                            <ImageBackground
-							  source={{uri:item.episode_featured_image}}
-							  style={styles.imagestyle}
-							 />
-							 </View>
-							  <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text> 
-						</TouchableOpacity>
-					  )}
-					/>
-					
-					</View>
-				</View> 
-
-*/
-
-
-
-
-/*
-<View style={styles.container}>
-		      
-			// 	<Text style={styles.Podcast}>Popular Podcasts</Text>
-			// 	<FlatList
-			// 	horizontal
-			// 	  pagingEnabled={true}
-			// 	  showsHorizontalScrollIndicator={false}
-			// 	  keyExtractor={item=>item.id.toString()}
-            //       data={this.state.podcast}
-			// 	  renderItem={({item})=>(
-			// 	<TouchableOpacity onPress={()=>{
-			// 	navigation.navigate('Podcast Detail',{
-			// 			Data:item
-			// 		})
-			// 	}}>
-			// 		<Content  key={item.id}>
-			// 		<Card>
-			// 		  <CardItem>
-			// 			<Left>
-			// 			  <Thumbnail source={{uri:item.episode_player_image }} />
-			// 			  <Body>
-			// 				<Text>{item.title.rendered}</Text>
-			// 				<Text note>{item.type}</Text>
-			// 			  </Body>
-			// 			</Left>
-			// 		  </CardItem>
-			// 		  <CardItem cardBody>
-			// 			<Image source={{uri:item.episode_featured_image}} style={{height: 200, width: null, flex: 1}}/>
-			// 		  </CardItem>
-			// 		  <CardItem>
-			// 			<Left>
-			// 			  <Button transparent>
-			// 				<Text style={{color:'red'}}>{moment(item.date).format('ll')}</Text>
-			// 				</Button>
-			// 				<Button transparent>
-			// 				  <Text style={{color:'red'}}>Durations:{' '}{item.meta.duration}</Text>
-			// 				</Button>
-			// 			</Left>
-			// 			<Body>
-						 
-			// 			</Body>
-			// 		  </CardItem>
-			// 		</Card>
-			// 	  </Content>
-			// 	  </TouchableOpacity>
-			// 	  )}				
-			// 	  />
-			// 	<AdMobBanner
-			// 	style={styles.admob}
-			// 	bannerSize="fullBanner"
-			// 	adUnitID="ca-app-pub-4848737122422413/6221324032" // Test ID, Replace with your-admob-unit-id
-			// 	servePersonalizedAds // true or false
-			// 	onDidFailToReceiveAdWithError={this.bannerError} />
-			// </View >
-
-
-*/
+export default connect(mapStateToProps,mapDispatchToProps)(Radio);

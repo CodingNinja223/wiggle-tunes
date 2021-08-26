@@ -12,7 +12,7 @@ import Review from './src/screens/Review';
 import Shop from './src/screens/Shop';
 import News from './src/screens/News';
 import NewsDeatil from './src/screens/NewsDetails';
-import { Ionicons, AntDesign , MaterialIcons,Entypo ,FontAwesome5  } from '@expo/vector-icons'; 
+import { Ionicons, AntDesign , MaterialIcons,Entypo ,FontAwesome5,FontAwesome   } from '@expo/vector-icons'; 
 import RadioTabs from './src/screens/RadioTab';
 import ProductDetail from './src/screens/ProductDetail';
 import Feedback from './src/screens/Feedback';
@@ -31,6 +31,11 @@ import {db} from './src/util/firebase';
 import PodDetail from './src/screens/Podcast-Detail';
 import CustomTabBar from './src/screens/CustomTabBar';
 import ViewRecordings from './src/screens/ViewRecordings';
+import VideoRecording from './src/screens/Video-message';
+import PodcastTab from './src/screens/PodcastTab';
+import Appinfo from './src/screens/AppInfo';
+import Camera from './src/components/camera';
+
 const Stack=createStackNavigator();
 const PrimaryNavigation=({navigation})=>{
 return(
@@ -131,8 +136,11 @@ const PodcastNavigator=({navigation})=>{
         </Stack.Navigator>
     )
 }
+
+
 const Tab=createBottomTabNavigator();
-const TabNavigation=()=>{
+const TabNavigation=({itemCount})=>{
+    
     return(
         <Tab.Navigator 
         initialRouteName="Now Playing"
@@ -160,6 +168,10 @@ const TabNavigation=()=>{
                     iconName=focused
                     ? 'radio-sharp'
                     : 'radio-outline'
+                 } else if(route.name === 'Shop'){
+                    return iconName=focused
+                     ? <FontAwesome5 name="shopping-basket" size={24} color="white" />
+                     : <FontAwesome5 name="shopping-basket" size={24} color="white" />
                  }
 
                  return <Ionicons name={iconName} size={25} color="white" /> 
@@ -168,7 +180,8 @@ const TabNavigation=()=>{
         >
              <Tab.Screen name="Now Playing" component={PrimaryNavigation}/>
              <Tab.Screen name="Watch" component={WatchNavigator}/>
-             <Tab.Screen name="Podcasts" component={PodcastNavigator}/>
+             <Tab.Screen name="Podcasts" component={PodcastTab}/>
+             <Tab.Screen name="Shop" component={ShopNavigator} options={{ tabBarBadge: itemCount }} />
         </Tab.Navigator>
     )
 }
@@ -272,11 +285,32 @@ const ReviewNavigation=({navigation})=>{
     )
 }
 
+const AppInfoNavigation=({navigation})=>{
+    return(
+        <Stack.Navigator>
+            <Stack.Screen name="App info" component={Appinfo}
+             options={{
+                headerRight:()=>(
+                    <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
+                ),
+                headerLeft:()=>(
+                    <Ionicons name="menu" size={30} color="white" onPress={()=>navigation.openDrawer()}/>
+                ),
+                headerStyle: {
+                    backgroundColor: 'black',
+                  },
+                headerTintColor: '#fff',
+            }}
+            />
+        </Stack.Navigator>
+    )
+}
+
 
 const VoiceNavigation=({navigation})=>{
     return(
       <Stack.Navigator>
-          <Stack.Screen name="Send Voice Message" component={VoiceMessage}  
+          <Stack.Screen name="Wiggle Tunes Messenger" component={VoiceMessage}  
             options={{
                 headerRight:()=>(
                     <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
@@ -290,7 +324,11 @@ const VoiceNavigation=({navigation})=>{
                 headerTintColor: '#fff',
             }}
           />
-          <Stack.Screen name="Recordings" component={ViewRecordings} options={{
+          <Stack.Screen
+           name="Camera"
+           component={Camera} 
+           navigation={navigation} 
+           options={{
               headerStyle: {
                 backgroundColor: 'black',
               },
@@ -303,7 +341,7 @@ const VoiceNavigation=({navigation})=>{
 const VideoNavigation=({navigation})=>{
     return(
       <Stack.Navigator>
-          <Stack.Screen name="Video Message" component={VideoMessage}  
+          <Stack.Screen name="Video Message" component={VideoRecording}  
             options={{
                 headerRight:()=>(
                     <Entypo name="home" size={30} color="white" onPress={()=>navigation.navigate('Now Playing')} />
@@ -346,6 +384,7 @@ class App extends Component {
  
 
   async  componentDidMount() {
+      console.log('This is the value ',this.props.itemCount)
         await Font.loadAsync({
           Roboto: require('native-base/Fonts/Roboto.ttf'),
           Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
@@ -381,7 +420,6 @@ class App extends Component {
             const image=d.map(item=>{
                 return item.bigPicture;
             })
-            console.log(`This is the image`,image[0],title[0],body[0])
             await db.collection("Notifications")
             .add({
               title:title[0],
@@ -444,19 +482,19 @@ class App extends Component {
                    )
 
                }}/>
-               <Drawer.Screen name="Shop" component={ShopNavigator} options={{
+               {/* <Drawer.Screen name="Shop" component={ShopNavigator} options={{
                    drawerIcon:()=>(
                     <AntDesign name="shoppingcart" size={24} color="white" />
                    )
 
-               }}/>
+               }}/> */}
                <Drawer.Screen name="Feedback" component={FeedbackNavigation} options={{
                    drawerIcon:()=>(
                     <MaterialIcons name="feedback" size={24} color="white" />
                    )
 
                }} />
-               <Drawer.Screen name="Send Voice message" component={VoiceNavigation} options={{
+               <Drawer.Screen name="Wiggle Tunes Messenger" component={VoiceNavigation} options={{
                    drawerIcon:()=>(
                     <MaterialIcons name="keyboard-voice" size={24} color="white" />
                    )
@@ -468,9 +506,21 @@ class App extends Component {
                    )
 
                }}/>
+                {/* <Drawer.Screen name="Live Streaming" component={NotificationNavigator} options={{
+                   drawerIcon:()=>(
+                    <MaterialIcons name="live-tv" size={24} color="white" />
+                   )
+
+               }}/> */}
                <Drawer.Screen name="Rate this App" component={ReviewNavigation} options={{
                    drawerIcon:()=>(
                     <MaterialIcons name="star-rate" size={24} color="white" />
+                   )
+
+               }}/>
+               <Drawer.Screen name="App Info" component={AppInfoNavigation} options={{
+                   drawerIcon:()=>(
+                    <AntDesign name="infocirlceo" size={24} color="white" />
                    )
 
                }}/>
@@ -484,6 +534,7 @@ class App extends Component {
 const mapStateToProps=createStructuredSelector({
     itemCount:selectCartItemsCount
 })
+
 
 export default connect(mapStateToProps)(App);
 

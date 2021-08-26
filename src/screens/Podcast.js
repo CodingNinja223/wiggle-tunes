@@ -1,25 +1,28 @@
 import React,{Component} from 'react';
 import {View,StyleSheet,FlatList,TouchableOpacity,Linking,ScrollView,SafeAreaView,ActivityIndicator,ImageBackground} from 'react-native';
-
+import {connect} from 'react-redux'
 import { Audio } from 'expo-av';
-import { Ionicons } from '@expo/vector-icons'
-import moment from 'moment';
 import {AdMobBanner} from 'expo-ads-admob';
-import {Content, Card, CardItem, Thumbnail, Text, Button,Left, Body, } from 'native-base';
-import HTML from "react-native-render-html";
+import { createStructuredSelector  } from 'reselect';
+import { selectPodcastData } from '../../redux/sound/sound.selectors';
+
 class Podcast extends Component{
     constructor(){
         super();
         this.state={
           isLoading:true,
-          podcast:[],isPlaying: false,playbackInstance: null,currentIndex: 0,volume: 1.0,isBuffering: true,sounds:'',playingStatus:"nosound"
+          podcast:[],
+          isPlaying: false,
+          playbackInstance: null,
+          currentIndex: 0,
+          volume: 1.0,
+          isBuffering: true,
+          sounds:'',
+          playingStatus:"nosound"
         }
     }
     async componentDidMount(){
-      const response = await fetch('https://wiggletunes.co.za/wp-json/wp/v2/podcast');
-      const data = await response.json();
       this.setState({
-        podcast:[...data],
         isLoading:false
       })
 
@@ -68,55 +71,9 @@ onPlaybackStatusUpdate = status => {
     isBuffering: status.isBuffering,
   })
 }
-    // async _pauseAndPlayRecording() {
-    //   const {isPlaying}=this.state;
-    //   if (this.sound != null) {
-    //     if (this.state.playingStatus == 'playing') {
-    //       console.log('pausing...');
-    //       await this.sound.pauseAsync();
-    //       console.log('paused!');
-    //       this.setState({
-    //         playingStatus: 'donepause',
-    //         isPlaying:false
-    //       });
-    //     } else {
-    //       console.log('playing...')
-    //       await this.sound.playAsync();
-        
-         
-    //       console.log('playing!');
-    //       this.setState({
-    //         playingStatus: 'playing',
-    //         isPlaying:true
-    //       });
-    //     }
-    //   }
-    // }
-
-    // _syncPauseAndPlayRecording() {
-    //   if (this.sound != null) {
-    //     if (this.state.playingStatus == 'playing') {
-    //       this.sound.pauseAsync();
-    //     } else {
-    //       this.sound.playAsync();
-    //     }
-    //   }
-    // }
-
-    // _playAndPause = (e) => {
-    //   switch (this.state.playingStatus) {
-    //     case 'nosound':
-    //       this._playRecording(e);
-    //       break;
-    //     case 'donepause':
-    //     case 'playing':
-    //       this._pauseAndPlayRecording();
-    //       break;
-    //   }
-    // }
+    
     render(){
-      const {podcast,isPlaying}=this.state;
-      const {navigation}=this.props;
+      const {navigation,itemC}=this.props;
       console.log(this.state.sounds)
       if(this.state.isLoading){
         return(
@@ -129,29 +86,31 @@ onPlaybackStatusUpdate = status => {
           <View style={{backgroundColor:'#161616',justifyContent:'center',alignItems:'center'}}>
                <FlatList
                 keyExtractor={item=>item.id.toString()}
-                data={podcast} 
+                data={itemC} 
                 renderItem={({item})=>(
                   <TouchableOpacity style={{margin:10}} onPress={()=>{
                     navigation.navigate('Podcast Detail',{
-                      Data:[item]
+                      Data:[item],
+                      image:item.episode_featured_image,
+                      title:item.title.rendered,
+                      type:item.type,
+                      music:item.meta.audio_file
                     })
+                    console.log("this is the image",item.meta.audio_file)
                     console.log('This works')
                   }}>
-                    <View style={styles.box}>
+                    <View>
                                   <ImageBackground
                       source={{uri:item.episode_featured_image}}
                       style={styles.imagestyle}
                      >
-                  <View style={styles.overlay}></View>
                        </ImageBackground>
-                       {/* <Text style={styles.title}>{item.title.rendered}</Text> */}
                      </View>
-                      {/* <Text style={{color:'white',fontSize:6,marginLeft:10}}>{item.title.rendered}</Text>  */}
                   </TouchableOpacity>
                 )}
                />
               <AdMobBanner
-                  style={{width:'100%'}}
+                  style={{width:'100%',height:200}}
                   bannerSize="fullBanner"
                   adUnitID="ca-app-pub-4848737122422413/6221324032" // Test ID, Replace with your-admob-unit-id
                   servePersonalizedAds // true or false
@@ -177,16 +136,7 @@ const styles=StyleSheet.create({
       zIndex:999,
      fontSize:10
     },
-    // overlay:{
-    //   position: 'absolute',
-    //   top: 0,
-    //   right: 0,
-    //   bottom: 0,
-    //   left: 0,
-    //   backgroundColor: 'black',
-    //   opacity: 0.6,
-    //   fontWeight:"bold"
-    // },
+    
     controls: {
       flexDirection: 'row'
     },
@@ -270,7 +220,9 @@ const styles=StyleSheet.create({
     }
 })
 
-
-export default Podcast;
+const mapStateToProps=createStructuredSelector({
+  itemC:selectPodcastData
+ })
+export default connect(mapStateToProps)(Podcast);
 
 
