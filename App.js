@@ -392,7 +392,6 @@ class App extends Component {
         });
         this.setState({ isReady: true });   
         
-        
         /* O N E S I G N A L   S E T U P */
         OneSignal.setLogLevel(6, 0);
         OneSignal.setAppId("590075df-aaa1-4966-a1f8-25ba8bdcbc6b");

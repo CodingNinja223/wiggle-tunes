@@ -7,15 +7,9 @@ import {addItem} from '../../redux/cart/cart.actions'
 
 
 class ProductDetail extends Component{
-
-
-
-  pickerCallback = message => {
-    if (message && message.nativeEvent && message.nativeEvent.data) {
-      console.log(message.nativeEvent.data); 
-    }
-  };
-
+constructor(){
+  super();
+}
 
 
   render(){

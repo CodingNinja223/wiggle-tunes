@@ -4,7 +4,7 @@ import {MaterialIcons} from '@expo/vector-icons'
 const AppInfo=()=>{
     return(
       <View style={styles.container}>
-          <Text style={{fontWeight:'bold',fontSize:23,color:'white',textAlign:'center'}}>Wiggle Tunes</Text> 
+          <Text style={{fontWeight:'bold',fontSize:23,color:'white',textAlign:'center',fontFamily:'roboto'}}>Wiggle Tunes</Text> 
           <Text style={{textAlign:'center',color:'white'}}>Version 5.0.1</Text> 
           <Image source={require('../img/icon.png')} style={{height:200,width:200}}/> 
           <View>

@@ -31,7 +31,7 @@ constructor(){
                         <View key={item.productId} style={styles.inline}>
                         <Thumbnail square small source={{uri:`${item.productImage}`}}  style={{marginRight:5}}/>
                         <Text style={{color:'white',fontSize:15,marginRight:5}}>{item.productTitle}</Text>
-                      <View style={{flexDirection:'row',marginLeft:20}}>
+                        <View style={{flexDirection:'row',marginLeft:20}}>
                         <AntDesign name="caretleft" style={{marginRight:10}} size={24} color="white" onPress={()=>removeItem(item)} />
                           <Text style={{color:'white'}}>{item.quantity}</Text>
                         <AntDesign name="caretright" style={{marginLeft:10}} size={24} color="white" onPress={()=>addItem(item)}/>

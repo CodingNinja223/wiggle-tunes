@@ -10640,11 +10640,6 @@ react-native-mail@^6.1.0:
   resolved "https://registry.yarnpkg.com/react-native-mail/-/react-native-mail-6.1.0.tgz#cd7fa390824f5d1182fbe0599d135d221d11d205"
   integrity sha512-u2JqlHe19OKbXPKx3mNhBTuF7LfM4EkpVG/DkpY5i5G+dgOz8rRtBDKvcuJfUQnMBNav3kwvcwArjOG3rZhJZQ==
 
-react-native-music-control@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-music-control/-/react-native-music-control-1.4.0.tgz#8c1793e3899a327b6f74fada4f8d04b9f2b3d0c7"
-  integrity sha512-fyljEq3h8gXo5zzQyGP/x3cFhyMvruoaLZFJRxM79+M0WajjFKXLbhhofbGHsA78wnGW+IQ+BbJQf9qUTTsXjg==
-
 react-native-onesignal@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.1.1.tgz#c0e737eac020563f161c2da371b811fa3989e969"
