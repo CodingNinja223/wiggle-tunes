@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import {View,FlatList,TouchableOpacity,ScrollView,Image,SafeAreaView,ActivityIndicator, StyleSheet }from 'react-native';
 import {AdMobBanner} from 'expo-ads-admob';
 import { Card, CardItem, Left,Right, Body,Text, Icon } from 'native-base';
+import { ImagePicker } from 'expo';
 
 class News extends Component{
     constructor(){
@@ -47,24 +48,12 @@ class News extends Component{
                       headerTitle:item.title.rendered
                   })
               }}>   
-               <Card>
-                    <CardItem>
-                      <Left style={{flex:0.8}}>
-                        <Body>
-                          <Text note style={{fontWeight:'bold',fontSize:17}}>{item.title.rendered.replace(/&#8217;/g, "'").replace('&amp;','&')}</Text>
-                        </Body>
-                      </Left>
-                      <Right style={{flex:0.2}}>
-                        <Icon name="ios-heart"/>
-                      </Right>
-                    </CardItem>
-                    <CardItem cardBody>
-                      <Image source={{ uri:item.featured_image_urls.medium }} style={{ width:'100%', height: 170,resizeMode:'cover' }}  />
-                    </CardItem>
-                    <CardItem content style={{margin:10}}>
-                     <Text note numberOfLines={1}>{item.content.rendered.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, '').replace(/&#39;/g, "'").replace(/&#8217;/g, "'").replace(/&nbsp;/g, " ").replace(/&#8211;/g, "-").replace(/&gt;/g, ">").replace(/&#8216;/g, "'").replace(/&#8221;/g, ' " ' ).replace(/&#8230;/g, ' ... ' ).replace(/&mdash;/g, ' -- ' ).replace(/&quot;/g, '"').replace(/&#8220;/g, '"')}</Text>
-                    </CardItem>
-                  </Card>
+                <View style={{borderRadius:12,padding:5,backgroundColor:'white',margin:10}}>
+                    <Image source={{uri:item.featured_image_urls.medium}} style={{height:200,borderRadius:5,resizeMode:"cover"}}/>
+                    <View style={{padding:10,margin:5}}>
+                    <Text note style={{fontWeight:'bold',fontSize:17}}>{item.title.rendered.replace(/&#8217;/g, "'").replace('&amp;','&')}</Text>
+                    </View>
+                </View>
              </TouchableOpacity>  
              )}
           />
@@ -87,3 +76,28 @@ const styles=StyleSheet.create({
     backgroundColor:'black'
   }
 })
+
+
+/*
+ <Card>
+                    <CardItem>
+                      <Left style={{flex:0.8}}>
+                        <Body>
+                          <Text note style={{fontWeight:'bold',fontSize:17}}>{item.title.rendered.replace(/&#8217;/g, "'").replace('&amp;','&')}</Text>
+                        </Body>
+                      </Left>
+                      <Right style={{flex:0.2}}>
+                        <Icon name="ios-heart"/>
+                      </Right>
+                    </CardItem>
+                    <CardItem cardBody>
+                      <Image source={{ uri:item.featured_image_urls.medium }} style={{ width:'100%', height: 170,resizeMode:'cover' }}  />
+                    </CardItem>
+                    <CardItem content style={{margin:10}}>
+                     <Text note numberOfLines={1}>{item.content.rendered.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, '').replace(/&#39;/g, "'").replace(/&#8217;/g, "'").replace(/&nbsp;/g, " ").replace(/&#8211;/g, "-").replace(/&gt;/g, ">").replace(/&#8216;/g, "'").replace(/&#8221;/g, ' " ' ).replace(/&#8230;/g, ' ... ' ).replace(/&mdash;/g, ' -- ' ).replace(/&quot;/g, '"').replace(/&#8220;/g, '"')}</Text>
+                    </CardItem>
+                  </Card>
+
+
+
+*/

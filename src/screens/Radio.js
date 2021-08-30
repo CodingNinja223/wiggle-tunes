@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, TouchableOpacity, View, Text,Dimensions,FlatList,ScrollView,ImageBackground,Image } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, AntDesign,Entypo } from '@expo/vector-icons'
 import { Audio } from 'expo-av';
 import {connect} from 'react-redux';
 import {AdMobBanner} from 'expo-ads-admob';
@@ -29,7 +29,8 @@ import {selectPodcastData} from '../../redux/sound/sound.selectors';
 	async componentDidMount() {
 		const response = await fetch('https://wiggletunes.co.za/wp-json/wp/v2/podcast');
 		const data = await response.json();
-		
+		console.log('This is the data',data)
+
 		this.props.SoundCard(data);
 		this.setState({
 		  podcast:[...data],
@@ -49,7 +50,7 @@ import {selectPodcastData} from '../../redux/sound/sound.selectors';
 			this.loadAudio()
 		} catch (e) {
 			console.log(e)
-		}
+	}
  }
 
 	async loadAudio() {
@@ -157,7 +158,22 @@ import {selectPodcastData} from '../../redux/sound/sound.selectors';
 					
 					</View>
 				</View> 
-				
+				<View style={styles.header}>
+				<View style={{flexDirection:'row',padding:15}}>
+					<View>
+				     	<Image source={require('../img/icon.png')} style={{width:50,height:50,position:'absolute',left:340,bottom:40}}/>
+                         <Text style={{color:'white',position:'absolute',left:110,top:8}}>Powered by Wiggle Digital Ltd.</Text>
+					</View>
+					<TouchableOpacity style={{marginBottom:20}} onPress={this.handlePlayPause}>
+						{ this.state.playing 
+						? 
+						 (<AntDesign name="pause" size={35} color="white"  style={{paddingBottom:25}}/>)
+						 :
+						 (<Entypo name="controller-play" size={35} color="white" style={{paddingBottom:25}} />)
+						}
+					</TouchableOpacity>	   
+				</View>
+				</View>
 			</ScrollView>
 		)
 	}
@@ -247,6 +263,19 @@ const styles = StyleSheet.create({
 	admob:{
 		position:'absolute',
 		top:'90%',
+	},
+	header:{
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 6,
+		},
+		shadowOpacity: 0.39,
+		shadowRadius: 8.30,
+
+		elevation: 13,
+		backgroundColor:'black',
+		height:60,
 	}
 })
 

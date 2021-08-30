@@ -15,8 +15,9 @@ import { RNCamera } from 'react-native-camera';
 import {AdMobBanner} from 'expo-ads-admob';
 import RNFS from 'react-native-fs';
 import {db} from '../util/firebase'
-import * as ImagePicker from "react-native-image-picker";
+import {launchCamera,launchImageLibrary} from "react-native-image-picker";
 import storage from '@react-native-firebase/storage';
+import {utils} from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
 import ImageResizer from 'react-native-image-resizer';
 import moment from 'moment'
@@ -126,7 +127,9 @@ onStartRecord = async () =>{
 
 addAttachment =()=>{
   const options = {
+    title:'',
     mediaType:'mixed',
+    path: RNFS.DocumentDirectoryPath  + '/test.jpg',
     maxWidth: 2000,
     maxHeight: 2000,
     storageOptions: {
@@ -135,7 +138,7 @@ addAttachment =()=>{
     }
   };
 
-  ImagePicker.launchImageLibrary(options,response => {
+  launchImageLibrary(options,response => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.error) {
@@ -143,50 +146,42 @@ addAttachment =()=>{
     } else if (response.customButton) {
       console.log('User tapped custom button: ', response.customButton);
     } else {
-      // const name=["name":"this is a long message"];
 
-      const source =  response.assets;
-      console.log(source);
-       this.setState({
-        attachment:source
-      })
+       const source =  response.assets;
 
-     const item = source.map(item=>{
-        console.log(item.uri)
-      })
+       console.log(source);
+        this.setState({
+         attachment:source
+        })
 
-      const name =[{"name":"kent zam  pam dan"}];
+        const item = source.map(item=>{
+          console.log("this is the item",item.uri);
+         })
 
+     
 
-      name.map(item=>{
-        console.log(item.name)
-      })
-      let reference=storage().ref('attachment');
-      let task=reference.putFile(`${item}`);
-
-      task.then(()=>{
-           console.log('Image upload');
-      }).catch((e)=>{
-        console.log('this is the plan');
-      })
-      
-
+        const reference= storage().ref('images/');
+        const task=reference.putFile(`${utils.FilePath.PICTURES_DIRECTORY}`);
+        
+        task.then((res) => {
+          console.log(res);
+        })
+    
     }
   });
-
-
 }
 
  selectImage = () => {
   const options = {
-    title:'WhatsApp Image',
-    storageOptions: {
+     title:'WhatsApp Image',
+     mediaType:'photo',
+     storageOptions: {
       skipBackup: true,
       path: 'images'
     }
   };
 
-  ImagePicker.launchImageLibrary(options, response => {
+  launchImageLibrary(options, response => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.error) {
@@ -209,12 +204,12 @@ addAttachment =()=>{
       }).catch((e)=>{
         console.log('this is the plan');
       })
-    }
+    }   
   });
 
 
-
 };
+
 
 uploadImage = async () => {
   const { uri } = image;

@@ -74,9 +74,8 @@ async loadAudio() {
 		} catch (e) {
 			console.log(e)
 		}
+
 }
-
-
 	
 	onPlaybackStatusUpdate = status => {
 		this.setState({
@@ -171,12 +170,12 @@ const styles=StyleSheet.create({
 		justifyContent:'center',
 		alignItems:'center'
 	},
-	// controls: {
-	// 	position:'absolute',
-	// 	top:'35%',
-    //     left:'30%',
-	// 	flexDirection: 'row'
-	// },
+	controls: {
+		position:'absolute',
+		top:'35%',
+        left:'40%',
+		flexDirection: 'row'
+	},
 	admob:{
 		position:'absolute',
 		top:'90%',
